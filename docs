@@ -1,0 +1,84 @@
+php artisan make:migration create_savings_table
+php artisan make:migration create_companies_table
+
+**if table already exist and want to add column**
+php artisan make:migration add_salary_fields_to_companies_table --table=companies
+public function up(): void
+{
+    Schema::table('companies', function (Blueprint $table) {
+        $table->decimal('gross_salary', 12, 2)->after('email');
+
+        $table->enum('frequency', [
+            'weekly',
+            'biweekly',
+            'monthly',
+        ])->default('monthly')->after('gross_salary');
+
+        $table->date('effective_date')->after('frequency');
+    });
+}
+
+php artisan make:model Company
+
+ 
+php artisan make:migration create_credits_table
+php artisan make:model Credit
+php artisan make:controller CreditController
+php artisan make:policy CreditPolicy 
+
+
+
+php artisan make:migration create_transactions_table
+php artisan make:model Transaction
+
+**When should you use $casts?**
+
+Use it whenever a database value should behave as a specific PHP type:
+
+date → dates (birth_date, effective_date, transaction_date)
+datetime → timestamps
+decimal:2 → money amounts
+boolean → flags (is_active, is_admin)
+array / json → JSON columns
+**This lets you do:**
+$event->event_date->format('F d, Y');
+$event->event_date->isToday();
+$event->event_date->diffForHumans();
+
+
+php artisan make:migration create_events_table
+php artisan make:model Event
+php artisan make:controller EventController
+
+
+
+php artisan make:controller ExpenseController --resource
+
+
+
+**pagination**
+php artisan vendor:publish --tag=laravel-pagination
+
+
+
+**In Laravel, the common convention is:**
+
+Item	Convention	Example
+Model	Singular	Event, Company, Saving, Credit
+Controller	Singular + Controller	EventController, CompanyController, SavingController
+Database Table	Plural	events, companies, savings, credits
+Route Name	Usually plural	events.index, companies.store
+View Folder	Usually plural	resources/views/events/
+
+
+php artisan make:controller DashboardController
+
+
+** solid principle **
+
+php artisan make:class Services/DashboardService
+
+if not working do it manually 
+mkdir app/Services
+
+
