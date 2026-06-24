@@ -12,11 +12,17 @@ class Saving extends Model
 {
     use HasFactory;
 
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_CANCELLED = 'cancelled';
+
     protected $fillable = [
         'user_id',
         'goal_name',
         'target_amount',
         'frequency',
+        'status',
     ];
     protected $casts = [
         'created_at' => 'date', 

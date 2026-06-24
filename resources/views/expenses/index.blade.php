@@ -12,6 +12,16 @@
         </button>
     </div>
 @endif
+
+@if ($errors->any())
+    <div class="mb-4 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700">
+        <ul class="list-disc list-inside">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <x-app-layout>  
     <x-slot name="header">
   
@@ -25,9 +35,11 @@
             </div>
 
             <div class="text-right">
-                <p class="text-sm text-gray-500">Total Expenses for this month</p>
+                <p class="text-sm text-gray-500">
+                    Previous Month Expenses
+                </p>
                 <p class="text-3xl font-bold text-purple-600"> 
-                 
+                    {{ number_format($previousMonthExpenses, 2)}} 
                 </p>
             </div>
         </div>
@@ -35,7 +47,7 @@
 
 
     </x-slot> 
-    <div  x-data="{ open: false }" class="py-12">
+    <div x-data="{ openCreate: false }" class="py-12">
 
 
 
@@ -50,16 +62,16 @@
                             Active Transaction
                         </p>
                         <p class="text-2xl font-bold text-purple-600">
-                            
+                            {{ $activeTransaction }}
                         </p>
                     </div>
 
                     <div class="bg-green-50 p-4 rounded">
                         <p class="text-sm text-gray-500">
-                            Previous Month Expenses
+                            Total Expenses for this month
                         </p>
                         <p class="text-2xl font-bold text-green-600">
-                          
+                            {{ number_format($thisMonthExpenses, 2) }} 
                         </p>
                     </div>
 
@@ -97,11 +109,15 @@
                             @forelse ($expenses as $expense)  
                                 <tr class="border-b">
                                     <td class="p-2">{{ $expense->expense_name}}</td>
-                                    <td class="p-2">{{ $expense->amount }}</td>
-                                    <td class="p-2">{{ $expense->period }}</td>
-                                    <td class="p-2">{{ $expense->notes }}</td> 
-                                    <td class="p-2 text-right text-green-600 font-semibold">
-                                        {{ $expense->created_at->format('M d, y') }}
+                                    <td class="p-2">{{ number_format($expense->amount, 2) }}</td>
+                                    <td class="p-2"> 
+
+                                        {{ $expense->period?->format('M d, Y') }}
+                                    </td>
+                                    <td class="p-2">{{ \Illuminate\Support\Str::limit($expense->notes, 100, '...') }} </td> 
+                                    <td class="p-2 text-right  ">
+                                       
+                                        {{ $expense->created_at?->format('M d, Y') }}
                                     </td>
                                 </tr> 
                             @empty 
@@ -121,7 +137,88 @@
         </div>
 
 
+        <!-- Create Modal -->
+        <div 
+            x-show="openCreate"
+            x-transition
+            @click.self="openCreate = false"
+            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+            x-cloak 
+        >
+            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
 
+                <h2 class="text-lg font-semibold mb-4">Add Expenses</h2>
+
+                <form method="POST" action="{{ route('expenses.store') }}">
+                    @csrf  
+                    <!-- "Expense Name -->
+                    <div class="mb-3">
+                        <x-input-label for="expense_name" value="Expense Name" />
+                        <x-text-input
+                            id="expense_name"
+                            name="expense_name"
+                            class="w-full"
+                            required
+                            placeholder="Expense Name"
+                        />
+                    </div>
+
+                    <!-- Amount -->
+                    <div class="mb-3">
+                        <x-input-label for="amount" value="Amount" />
+                        <x-text-input
+                            id="amount"
+                            name="amount"
+                            type="number"
+                            step="0.01"
+                            class="w-full"
+                            required
+                            placeholder="Enter amount"
+                        />
+                    </div>
+ 
+
+                    <!-- Period -->
+                    <div class="mb-3">
+                        <x-input-label for="period" value="Period" />
+                        <x-text-input
+                            id="period"
+                            name="period"
+                            type="date" 
+                            class="w-full"
+                            required
+                        />
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="mb-3">
+                        <x-input-label for="notes" value="Notes" />
+                        <x-textarea
+                            id="notes"
+                            name="notes"
+                            rows="4"
+                            class="w-full"
+                            placeholder="Enter notes..."
+                        /> 
+                    </div>
+ 
+
+                    <div class="flex justify-end gap-2 mt-4">
+                        <button
+                            type="button"
+                            @click="openCreate = false"
+                            class="px-4 py-2 bg-gray-300 rounded hidden"
+                        >
+                            Cancel
+                        </button>
+
+                        <x-primary-button>
+                            Save Expenses
+                        </x-primary-button>
+                    </div>
+                </form>
+            </div>
+        </div> 
 
 
 

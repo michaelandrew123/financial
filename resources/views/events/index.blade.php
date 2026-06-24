@@ -24,70 +24,72 @@
             openEdit: false,
             editEvent: {}
         }" 
-        class="py-12">
+        class="py-12"> 
 
-        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6"> 
+            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
 
-            <div class="float-right mb-5">   
-                <button
-                    @click="openCreate = true"
-                    class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-                >
-                    Add
-                </button>
-            </div>
+                <div class="float-right mb-5">   
+                    <button
+                        @click="openCreate = true"
+                        class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                    >
+                        Add
+                    </button>
+                </div>
 
-            
-            <table class="min-w-full border border-gray-200">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-4 py-2 text-left">Title</th>
-                        <th class="px-4 py-2 text-right">Description</th>
-                        <th class="px-4 py-2 text-right">Event date</th> 
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @forelse ($events as $event)
-                        <tr class="border-t hover:bg-gray-50">
-                            <td class="px-4 py-2">
-                                {{ $event->title }}
-                            </td>
-                            <td class="px-4 py-2 text-right">
-                                {{ \Illuminate\Support\Str::limit($event->description, 100, '...') }}
-                            </td>
-                            <td class="px-4 py-2 text-right">
-                                {{ $event->event_date?->format('M d, Y') }}
-                            </td> 
-  
-                            <td class="px-4 py-2 text-center">
-                                <button
-                                    @click="
-                                        editEvent = {
-                                            id: {{ $editEvent->id }},
-                                            title: @js($company->title), 
-                                            description: @js($company->description), 
-                                            event_date: '{{ $company->event_date?->format('Y-m-d') }}'
-                                        };
-                                        openEdit = true;
-                                    "
-                                    class="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600"
-                                >
-                                    Edit
-                                </button> 
-                            </td>
-                        </tr>
-                    @empty
+                
+                <table class="min-w-full border border-gray-200">
+                    <thead class="bg-gray-100">
                         <tr>
-                            <td colspan="7" class="px-4 py-4 text-center text-gray-500">
-                                No Event yet.
-                            </td>
+                            <th class="px-4 py-2 text-left">Title</th>
+                            <th class="px-4 py-2 text-right">Description</th>
+                            <th class="px-4 py-2 text-right">Event date</th> 
                         </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+
+                    <tbody>
+                        @forelse ($events as $event)
+                            <tr class="border-t hover:bg-gray-50">
+                                <td class="px-4 py-2">
+                                    {{ $event->title }}
+                                </td>
+                                <td class="px-4 py-2 text-right">
+                                    {{ \Illuminate\Support\Str::limit($event->description, 100, '...') }}
+                                </td>
+                                <td class="px-4 py-2 text-right">
+                                    {{ $event->event_date?->format('M d, Y') }}
+                                </td> 
+    
+                                <td class="px-4 py-2 text-center">
+                                    <button
+                                        @click="
+                                            editEvent = {
+                                                id: {{ $editEvent->id }},
+                                                title: @js($company->title), 
+                                                description: @js($company->description), 
+                                                event_date: '{{ $company->event_date?->format('Y-m-d') }}'
+                                            };
+                                            openEdit = true;
+                                        "
+                                        class="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600"
+                                    >
+                                        Edit
+                                    </button> 
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="px-4 py-4 text-center text-gray-500">
+                                    No Event yet.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
- 
+        
         <!-- Create Modal -->
         <div 
             x-show="openCreate"

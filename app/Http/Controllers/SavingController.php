@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\Saving;
 class SavingController extends Controller
 {
     /**
@@ -103,6 +104,7 @@ class SavingController extends Controller
             'goal_name' => $request->goal_name,
             'target_amount' => $request->target_amount,
             'frequency' => $request->frequency,
+            'status' => Saving::STATUS_ACTIVE,
         ]);
     
 

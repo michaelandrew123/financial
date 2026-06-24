@@ -19,120 +19,116 @@
         </h2>
     </x-slot> 
     <div   
-    x-data="{
-        openCreate: false,
-        openEdit: false,
-        editCredit: {}
-    }" 
-    class="py-12">
+        x-data="{
+            openCreate: false,
+            openEdit: false,
+            editCredit: {}
+        }" 
+        class="py-12">
 
-        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <div class="float-right mb-5">  
-                <!-- <button
-                    @click="open = true"
-                    class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-                >
-                    Add
-                </button> -->
-                <button
-                    @click="openCreate = true"
-                    class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-                >
-                    Add
-                </button>
-            </div>
- 
-            
-            <table class="min-w-full border border-gray-200">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-4 py-2 text-left">Title</th>
-                        <th class="px-4 py-2 text-right">Original Amount</th>
-                        <th class="px-4 py-2 text-right">Remaining Balance</th>
-                        <th class="px-4 py-2 text-right">Monthly Payment</th>
-                        <th class="px-4 py-2 text-center">Start Date</th>
-                        <th class="px-4 py-2 text-center">End Date</th>
-                        <th class="px-4 py-2 text-center">Status</th>
-                        <th class="px-4 py-2 text-center hidden">Action</th>
-                    </tr>
-                </thead>
+            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
 
-                <tbody>
-                    @forelse ($credits as $credit)
-                        <tr class="border-t hover:bg-gray-50">
-                            <td class="px-4 py-2">
-                                {{ $credit->title }}
-                            </td>
-
-                            <td class="px-4 py-2 text-right">
-                                ₱{{ number_format($credit->original_amount, 2) }}
-                            </td>
-
-                            <td class="px-4 py-2 text-right">
-                                ₱{{ number_format($credit->remaining_balance, 2) }}
-                            </td>
-
-                            <td class="px-4 py-2 text-right">
-                                ₱{{ number_format($credit->monthly_payment, 2) }}
-                            </td>
-
-                            <td class="px-4 py-2 text-center">
-                                {{ $credit->start_date?->format('M d, Y') }}
-                            </td>
-
-                            <td class="px-4 py-2 text-center">
-                                {{ $credit->end_date?->format('M d, Y') }}
-                            </td>
-
-                            <td class="px-4 py-2 text-center">
-                                <span class="
-                                    px-2 py-1 text-xs rounded-full
-                                    @if($credit->status === 'active') bg-green-100 text-green-700
-                                    @elseif($credit->status === 'paid') bg-blue-100 text-blue-700
-                                    @elseif($credit->status === 'overdue') bg-red-100 text-red-700
-                                    @elseif($credit->status === 'restructured') bg-yellow-100 text-yellow-700
-                                    @else bg-gray-100 text-gray-700
-                                    @endif
-                                ">
-                                    {{ ucfirst($credit->status) }}
-                                </span>
-                            </td>
-
-                            <td class="px-4 py-2 text-center hidden">
-                                <button
-                                    @click="
-                                        editCredit = {
-                                            id: {{ $credit->id }},
-                                            title:  @js($credit->title),
-                                            original_amount: '{{ $credit->original_amount }}',
-                                            monthly_payment: '{{ $credit->monthly_payment }}',
-                                            start_date: '{{ $credit->start_date?->format('Y-m-d') }}',
-                                            end_date: '{{ $credit->end_date?->format('Y-m-d') }}',
-                                            status: @js($credit->status)
-                                        };
-                                        openEdit = true;
-                                    "
-                                    class="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600"
-                                >
-                                    Edit
-                                </button>
-                                <!-- @can('delete', $credit)
-                                    <button>Delete</button>
-                                @endcan -->
-                            </td>
-                        </tr>
-                    @empty
+                <div class="float-right mb-5">   
+                    <button
+                        @click="openCreate = true"
+                        class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                    >
+                        Add
+                    </button>
+                </div>
+    
+                
+                <table class="min-w-full border border-gray-200">
+                    <thead class="bg-gray-100">
                         <tr>
-                            <td colspan="7" class="px-4 py-4 text-center text-gray-500">
-                                No credits yet.
-                            </td>
+                            <th class="px-4 py-2 text-left">Title</th>
+                            <th class="px-4 py-2 text-right">Original Amount</th>
+                            <th class="px-4 py-2 text-right">Remaining Balance</th>
+                            <th class="px-4 py-2 text-right">Monthly Payment</th>
+                            <th class="px-4 py-2 text-center">Start Date</th>
+                            <th class="px-4 py-2 text-center">End Date</th>
+                            <th class="px-4 py-2 text-center">Status</th>
+                            <th class="px-4 py-2 text-center hidden">Action</th>
                         </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+
+                    <tbody>
+                        @forelse ($credits as $credit)
+                            <tr class="border-t hover:bg-gray-50">
+                                <td class="px-4 py-2">
+                                    {{ $credit->title }}
+                                </td>
+
+                                <td class="px-4 py-2 text-right">
+                                    ₱{{ number_format($credit->original_amount, 2) }}
+                                </td>
+
+                                <td class="px-4 py-2 text-right">
+                                    ₱{{ number_format($credit->remaining_balance, 2) }}
+                                </td>
+
+                                <td class="px-4 py-2 text-right">
+                                    ₱{{ number_format($credit->monthly_payment, 2) }}
+                                </td>
+
+                                <td class="px-4 py-2 text-center">
+                                    {{ $credit->start_date?->format('M d, Y') }}
+                                </td>
+
+                                <td class="px-4 py-2 text-center">
+                                    {{ $credit->end_date?->format('M d, Y') }}
+                                </td>
+
+                                <td class="px-4 py-2 text-center">
+                                    <span class="
+                                        px-2 py-1 text-xs rounded-full
+                                        @if($credit->status === 'active') bg-green-100 text-green-700
+                                        @elseif($credit->status === 'paid') bg-blue-100 text-blue-700
+                                        @elseif($credit->status === 'overdue') bg-red-100 text-red-700
+                                        @elseif($credit->status === 'restructured') bg-yellow-100 text-yellow-700
+                                        @else bg-gray-100 text-gray-700
+                                        @endif
+                                    ">
+                                        {{ ucfirst($credit->status) }}
+                                    </span>
+                                </td>
+
+                                <td class="px-4 py-2 text-center hidden">
+                                    <button
+                                        @click="
+                                            editCredit = {
+                                                id: {{ $credit->id }},
+                                                title:  @js($credit->title),
+                                                original_amount: '{{ $credit->original_amount }}',
+                                                monthly_payment: '{{ $credit->monthly_payment }}',
+                                                start_date: '{{ $credit->start_date?->format('Y-m-d') }}',
+                                                end_date: '{{ $credit->end_date?->format('Y-m-d') }}',
+                                                status: @js($credit->status)
+                                            };
+                                            openEdit = true;
+                                        "
+                                        class="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600"
+                                    >
+                                        Edit
+                                    </button>
+                                    <!-- @can('delete', $credit)
+                                        <button>Delete</button>
+                                    @endcan -->
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="px-4 py-4 text-center text-gray-500">
+                                    No credits yet.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
- 
         <!-- Create Modal -->
         <div 
             x-show="openCreate"

@@ -35,7 +35,7 @@
 
 
     </x-slot> 
-    <div  x-data="{ open: false }" class="py-12">
+    <div  x-data="{ openCreate: false }" class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">  
 
@@ -178,9 +178,18 @@
                 
                 <!-- Recent Savings Activity -->
                 <div class="mt-8">
-                    <h3 class="font-bold mb-3">
-                        Recent Transactions
-                    </h3>
+                
+                    <div class="flex flex-row justify-between my-2"> 
+                        <h3 class="font-bold mb-3">
+                            Recent Transactions
+                        </h3>
+    
+                        <x-secondary-button
+                            @click="openCreate = true"
+                        >
+                            Add
+                        </x-secondary-button> 
+                    </div>
 
                     <table class="w-full">
                         <thead>
@@ -226,9 +235,9 @@
  
         <!-- Modal -->
         <div 
-            x-show="open"
+            x-show="openCreate"
             x-transition
-            @click.self="open = false"
+            @click.self="openCreate = false"
             class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
             x-cloak
         >
@@ -266,7 +275,7 @@
 
                         <button type="button"
                                 @click="open = false"
-                                class="px-4 py-2 bg-gray-300 rounded">
+                                class="px-4 py-2 bg-gray-300 rounded hidden">
                             Cancel
                         </button>
 

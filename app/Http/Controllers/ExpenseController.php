@@ -13,9 +13,27 @@ class ExpenseController extends Controller
     { 
  
         $user = auth()->user();  
+
+        $previousMonthExpenses = $user->expenses()
+        ->whereBetween('created_at', [
+            now()->subMonth()->startOfMonth(),
+            now()->subMonth()->endOfMonth(),
+        ])
+        ->sum('amount');
+        $activeTransaction = $user->expenses()->whereBetween('created_at', [
+            now()->startOfMonth(),
+            now()->endOfMonth(),
+        ])->count();
+
         return view('expenses.index', [
             'user'=>$user,
-            'expenses'=>$user->expenses()->latest()->orderByDesc('date')->paginate(10)
+            'thisMonthExpenses'=>$user->expenses()->whereBetween('created_at', [
+                now()->startOfMonth(),
+                now()->endOfMonth(),
+            ])->sum('amount'),
+            'previousMonthExpenses' => $previousMonthExpenses,
+            'activeTransaction' => $activeTransaction,
+            'expenses' => $user->expenses()->latest()->orderByDesc('created_at')->paginate(10)
         ]);
     }
 
@@ -33,7 +51,16 @@ class ExpenseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'expense_name' => ['required', 'string', 'max:255'],
+            'amount' => ['required', 'numeric', 'min:0'], 
+            'period' => ['nullable', 'date', 'after_or_equal:today'], 
+            'notes' => ['required', 'string', 'max:2000'],
+        ]); 
+    
+        auth()->user()->expenses()->create($validated);
+    
+        return redirect()->back()->with('success', 'Credit added successfully!');
     }
 
     /**

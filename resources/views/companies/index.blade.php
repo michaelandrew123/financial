@@ -25,94 +25,94 @@
             editCompany: {}
         }" 
         class="py-12">
-
-        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-
-            <div class="float-right mb-5">   
-                <button
-                    @click="openCreate = true"
-                    class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-                >
-                    Add
-                </button>
-            </div>
-
-            
-            <table class="min-w-full border border-gray-200">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-4 py-2 text-left">Name</th>
-                        <th class="px-4 py-2 text-right">Address</th>
-                        <th class="px-4 py-2 text-right">Email</th>
-                        <th class="px-4 py-2 text-right">Gross Salary</th>
-                        <th class="px-4 py-2 text-center">Frequency</th>
-                        <th class="px-4 py-2 text-center">Monthly</th>
-                        <th class="px-4 py-2 text-center">Date</th>
-                        <th class="px-4 py-2 text-center">Action</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @forelse ($companies as $company)
-                        <tr class="border-t hover:bg-gray-50">
-                            <td class="px-4 py-2">
-                                {{ $company->name }}
-                            </td>
-                            <td class="px-4 py-2 text-right">
-                                {{ $company->address }}
-                            </td>
-                            <td class="px-4 py-2 text-right">
-                                {{ $company->email }} 
-                            </td>
-
-                            <td class="px-4 py-2 text-right">
-                                ₱{{ number_format($company->gross_salary, 2) }}
-                            </td>
-
-                     
-                            <td class="px-4 py-2 text-right">
-                                {{ $company->frequency }} 
-                            </td>
-
-                            <td class="px-4 py-2 text-right">
-                                {{ $company->monthly }} 
-                            </td> 
-
-                            <td class="px-4 py-2 text-center">
-                                {{ $company->effective_date?->format('M d, Y') }}
-                            </td>
-  
-                            <td class="px-4 py-2 text-center">
-                                <button
-                                    @click="
-                                        editCompany = {
-                                            id: {{ $company->id }},
-                                            name:  @js($company->name),
-                                            address: @js($company->address),
-                                            email: '{{ $company->email }}',
-                                            gross_salary: '{{ $company->gross_salary }}',
-                                            frequency: '{{ $company->frequency }}',
-                                            effective_date: '{{ $company->effective_date?->format('Y-m-d') }}'
-                                        };
-                                        openEdit = true;
-                                    "
-                                    class="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600"
-                                >
-                                    Edit
-                                </button> 
-                            </td>
-                        </tr>
-                    @empty
+        
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6"> 
+            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg"> 
+                <div class="float-right mb-5">   
+                    <button
+                        @click="openCreate = true"
+                        class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                    >
+                        Add
+                    </button>
+                </div> 
+                <table class="min-w-full border border-gray-200">
+                    <thead class="bg-gray-100">
                         <tr>
-                            <td colspan="7" class="px-4 py-4 text-center text-gray-500">
-                                No company yet.
-                            </td>
+                            <th class="px-4 py-2 text-left">Name</th>
+                            <th class="px-4 py-2 text-right">Address</th>
+                            <th class="px-4 py-2 text-right">Email</th>
+                            <th class="px-4 py-2 text-right">Gross Salary</th>
+                            <th class="px-4 py-2 text-center">Frequency</th>
+                            <th class="px-4 py-2 text-center">Monthly</th>
+                            <th class="px-4 py-2 text-center">Date</th>
+                            <th class="px-4 py-2 text-center">Action</th>
                         </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+
+                    <tbody>
+                        @forelse ($companies as $company)
+                            <tr class="border-t hover:bg-gray-50">
+                                <td class="px-4 py-2">
+                                    {{ $company->name }}
+                                </td>
+                                <td class="px-4 py-2 text-right">
+                                    {{ $company->address }}
+                                </td>
+                                <td class="px-4 py-2 text-right">
+                                    {{ $company->email }} 
+                                </td>
+
+                                <td class="px-4 py-2 text-right">
+                                    ₱{{ number_format($company->gross_salary, 2) }}
+                                </td>
+
+                        
+                                <td class="px-4 py-2 text-right">
+                                    {{ $company->frequency }} 
+                                </td>
+
+                                <td class="px-4 py-2 text-right">
+                                    {{ $company->monthly }} 
+                                </td> 
+
+                                <td class="px-4 py-2 text-center">
+                                    {{ $company->effective_date?->format('M d, Y') }}
+                                </td>
+    
+                                <td class="px-4 py-2 text-center">
+                                    <button
+                                        @click="
+                                            editCompany = {
+                                                id: {{ $company->id }},
+                                                name:  @js($company->name),
+                                                address: @js($company->address),
+                                                email: '{{ $company->email }}',
+                                                gross_salary: '{{ $company->gross_salary }}',
+                                                frequency: '{{ $company->frequency }}',
+                                                effective_date: '{{ $company->effective_date?->format('Y-m-d') }}'
+                                            };
+                                            openEdit = true;
+                                        "
+                                        class="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600"
+                                    >
+                                        Edit
+                                    </button> 
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="px-4 py-4 text-center text-gray-500">
+                                    No company yet.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div> 
         </div>
- 
+
+
         <!-- Create Modal -->
         <div 
             x-show="openCreate"

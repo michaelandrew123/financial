@@ -17,6 +17,11 @@ class Expense extends Model
         'notes',
     ];
 
+    protected $casts = [
+        'period'=>'date',
+        'created_at'=>'date'
+    ];
+     
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

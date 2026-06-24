@@ -1,4 +1,9 @@
 php artisan make:migration create_savings_table
+php artisan make:migration add_status_to_savings_table
+
+
+
+
 php artisan make:migration create_companies_table
 
 **if table already exist and want to add column**

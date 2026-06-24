@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')
             ->constrained('users')
-            ->cascadeOnDelete();
-            // $table->foreignId('user_id')->constrained('users');
+            ->cascadeOnDelete(); 
             $table->string('goal_name')->nullable(); 
             $table->decimal('target_amount', 12, 2)->nullable(); 
+            
             $table->enum('frequency', ['weekly', 'monthly', 'yearly'])->nullable();
 
             $table->timestamps();
