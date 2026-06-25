@@ -16,10 +16,12 @@ class Company extends Model
         'gross_salary',
         'frequency',
         'effective_date',
+        'is_active',
     ];
 
     protected $casts = [
-        'effective_date' => 'date'
+        'effective_date' => 'date', 
+        'is_active' => 'boolean',
     ];
 
     public function user(): BelongsTo

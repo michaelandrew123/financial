@@ -77,7 +77,7 @@
 
                 </div>
  
-                <!-- Recent Savings Activity -->
+                <!-- Recent Expenses Activity -->
                 <div class="mt-8">
                     
 

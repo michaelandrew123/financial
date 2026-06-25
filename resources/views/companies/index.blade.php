@@ -12,6 +12,17 @@
         </button>
     </div>
 @endif
+
+
+@if ($errors->any())
+    <div class="mb-4 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700">
+        <ul class="list-disc list-inside">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <x-app-layout>  
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -28,87 +39,112 @@
         
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6"> 
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg"> 
-                <div class="float-right mb-5">   
-                    <button
+        
+
+                <div class="flex flex-row justify-between my-2"> 
+                    <h3 class="font-bold mb-3">
+                        Recent Transactions
+                    </h3>
+
+                    <x-secondary-button
                         @click="openCreate = true"
-                        class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
                     >
                         Add
-                    </button>
+                    </x-secondary-button> 
                 </div> 
-                <table class="min-w-full border border-gray-200">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="px-4 py-2 text-left">Name</th>
-                            <th class="px-4 py-2 text-right">Address</th>
-                            <th class="px-4 py-2 text-right">Email</th>
-                            <th class="px-4 py-2 text-right">Gross Salary</th>
-                            <th class="px-4 py-2 text-center">Frequency</th>
-                            <th class="px-4 py-2 text-center">Monthly</th>
-                            <th class="px-4 py-2 text-center">Date</th>
-                            <th class="px-4 py-2 text-center">Action</th>
-                        </tr>
-                    </thead>
 
-                    <tbody>
-                        @forelse ($companies as $company)
-                            <tr class="border-t hover:bg-gray-50">
-                                <td class="px-4 py-2">
-                                    {{ $company->name }}
-                                </td>
-                                <td class="px-4 py-2 text-right">
-                                    {{ $company->address }}
-                                </td>
-                                <td class="px-4 py-2 text-right">
-                                    {{ $company->email }} 
-                                </td>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @forelse ($companies as $company)
+                        <div class="bg-white rounded-lg shadow border border-gray-200 p-5">
+                            <div class="mb-4 flex flex-row justify-between">
+                                
+                                <div class="">
+                                    <h3 class="text-lg font-semibold text-gray-800">
+                                        {{ $company->name }}
+                                    </h3>
+                                    <p class="text-sm text-gray-500">
+                                        {{ $company->email }}
+                                    </p>
+                                </div>
+                                <div class="flex justify-between">
+                                    @if($company->is_active)
+                                        <div>
+                                            <span class="px-2 py-1 text-xs bg-green-100 text-green-700 ">
+                                                Active
+                                            </span>
+                                        </div>
+                                    @else
+                                        <div>
+                                            <span class="px-2 py-1 text-xs bg-red-100 text-red-700 ">
+                                                Inactive
+                                            </span>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
 
-                                <td class="px-4 py-2 text-right">
-                                    ₱{{ number_format($company->gross_salary, 2) }}
-                                </td>
 
-                        
-                                <td class="px-4 py-2 text-right">
-                                    {{ $company->frequency }} 
-                                </td>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Address</span>
+                                    <span class="font-medium">{{ $company->address }}</span>
+                                </div>
 
-                                <td class="px-4 py-2 text-right">
-                                    {{ $company->monthly }} 
-                                </td> 
+                         
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Gross Salary</span>
+                                    <span class="font-semibold text-green-600">
+                                        ₱{{ number_format($company->gross_salary, 2) }}
+                                    </span>
+                                </div>
 
-                                <td class="px-4 py-2 text-center">
-                                    {{ $company->effective_date?->format('M d, Y') }}
-                                </td>
-    
-                                <td class="px-4 py-2 text-center">
-                                    <button
-                                        @click="
-                                            editCompany = {
-                                                id: {{ $company->id }},
-                                                name:  @js($company->name),
-                                                address: @js($company->address),
-                                                email: '{{ $company->email }}',
-                                                gross_salary: '{{ $company->gross_salary }}',
-                                                frequency: '{{ $company->frequency }}',
-                                                effective_date: '{{ $company->effective_date?->format('Y-m-d') }}'
-                                            };
-                                            openEdit = true;
-                                        "
-                                        class="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600"
-                                    >
-                                        Edit
-                                    </button> 
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="px-4 py-4 text-center text-gray-500">
-                                    No company yet.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Frequency</span>
+                                    <span>{{ ucfirst($company->frequency) }}</span>
+                                </div>
+ 
+
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Effective Date</span>
+                                    <span>
+                                        {{ $company->effective_date?->format('M d, Y') }}
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div class="mt-5 pt-4 border-t">
+                                <button
+                                    @click="
+                                        editCompany = {
+                                            id: {{ $company->id }},
+                                            name: @js($company->name),
+                                            address: @js($company->address),
+                                            email: @js($company->email),
+                                            gross_salary: '{{ $company->gross_salary }}',
+                                            frequency: '{{ $company->frequency }}',
+                                            effective_date: '{{ $company->effective_date?->format('Y-m-d') }}'
+                                            is_active: @js((bool) $company->is_active),
+                                        };
+                                        openEdit = true;
+                                    "
+                                    class="w-full px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600"
+                                >
+                                    Edit Company
+                                </button>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-span-full text-center py-8 text-gray-500">
+                            No company yet.
+                        </div>
+                    @endforelse
+                </div>
+
+
+
+
+
             </div> 
         </div>
 
@@ -310,6 +346,20 @@
                             x-model="editCompany.effective_date"
                         />
                     </div>
+                    <div class="mb-3">
+                        <x-input-label for="is_active" value="Status" />
+
+                        <select
+                            id="is_active"
+                            name="is_active"
+                            x-model="editCompany.is_active"
+                            class="w-full border-gray-300 rounded-md shadow-sm"
+                        >
+                            <option :value="true">Active</option>
+                            <option :value="false">Inactive</option>
+                        </select>
+                    </div>
+
                     <div class="flex justify-end gap-2 mt-4">
                         <button
                             type="button"

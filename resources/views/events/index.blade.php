@@ -29,7 +29,8 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6"> 
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
 
-                <div class="float-right mb-5">   
+                <div class="w-full py-2 px-1 text-center text-gray-700 shadow-lg bg-red-100 border rounded-lg my-5 ">Under Maintenance</div>
+                <div class="float-right mb-5 hidden">   
                     <button
                         @click="openCreate = true"
                         class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"

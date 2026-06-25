@@ -16,11 +16,35 @@ class CreditController extends Controller
     public function index() : View
     { 
  
-        $user = auth()->user();  
+        $user = auth()->user(); 
+        
+        $previousMonth = $user->credits()
+        ->whereBetween('created_at', [
+            now()->subMonth()->startOfMonth(),
+            now()->subMonth()->endOfMonth(),
+        ])
+        ->sum('original_amount');
+ 
+        $activeTransaction = $user->credits()->whereBetween('created_at', [
+            now()->startOfMonth(),
+            now()->endOfMonth(),
+        ])->count();
+
+
+        $currentMonth = $user->credits()->whereBetween('created_at', [
+            now()->startOfMonth(),
+            now()->endOfMonth(),
+        ])->sum('remaining_balance');
+
+
         return view('credits.index', [
             'user'=>$user,
-            'credits'=>$user->credits()->latest()->get()
+            'currentMonth'=> $currentMonth,
+            'previousMonth' => $previousMonth,
+            'activeTransaction' => $activeTransaction,
+            'credits'=>$user->credits()->latest()->orderByDesc('created_at')->paginate(10)
         ]);
+ 
     }
 
 

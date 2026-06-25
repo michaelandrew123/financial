@@ -79,6 +79,7 @@ class CompanyController extends Controller
             'gross_salary' => ['required', 'numeric', 'min:0'],
             'frequency' => ['required', 'in:weekly,biweekly,monthly'], 
             'effective_date' => ['nullable', 'date'],
+            'is_active' => ['required', 'boolean'], 
         ]);
     
         $company->update($validated);

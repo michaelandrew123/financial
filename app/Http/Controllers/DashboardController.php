@@ -20,10 +20,10 @@ class DashboardController extends Controller
         $data = $this->dashboardService
             ->getDashboardData($request->user());
         
-
+ 
         return view('dashboard', [
             'user' => $data['user'],
-
+            'expenses' => $data['expenses'],
             'savings' => $data['savings'],
             'totalSaved' => $data['totalSaved'],
             'companies' => $data['companies'],
@@ -33,12 +33,15 @@ class DashboardController extends Controller
 
             'totalCompanyActiveIncome' => $data['totalCompanyActiveIncome'],
             'totalExpensesForCurrentMonth' => $data['totalExpensesForCurrentMonth'], 
+            'totalBalance'=>$data['totalBalance'],
 
             'credits' => $data['credits'],
             'totalCredits' => $data['totalCredits'],
             
             'events' => $data['events'],
-            'recentTransactions' => $data['recentTransactions']
+            'recentTransactions' => $data['recentTransactions'],
+
+            'expensesChartData' => $data['expensesChartData'],
         ]);
 
 

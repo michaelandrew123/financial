@@ -27,7 +27,7 @@ return new class extends Migration
                 'monthly',
             ])->default('monthly'); 
             $table->date('effective_date');
- 
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

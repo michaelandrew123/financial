@@ -14,32 +14,38 @@
 
                         <div class="bg-white rounded shadow p-5">
                             <h3 class="text-gray-500">Total Income</h3>
-                            <p id="incomeCard"
-                            class="text-2xl font-bold text-green-600">
+                            <p id="incomeCard" class="text-2xl font-bold text-green-600">
                                 ₱{{ number_format($totalCompanyActiveIncome, 2) }} 
                             </p>
                         </div>
 
                         <div class="bg-white rounded shadow p-5">
                             <h3 class="text-gray-500">Total Expenses: {{ \Carbon\Carbon::now()->format('F d, Y') }}</h3>
-                            <p id="expenseCard"
-                            class="text-2xl font-bold text-red-600">
-                                ₱ {{ number_format($totalExpensesForCurrentMonth, 2) }}  
-                            </p>
+                          
+                                <p class="text-2xl font-bold text-blue-400">
+                                    ₱ {{ number_format($totalExpensesForCurrentMonth, 2) }}
+                                </p> 
                         </div>
 
                         <div class="bg-white rounded shadow p-5">
-                            <h3 class="text-gray-500">Balance</h3>
-                            <p id="balanceCard"
-                            class="text-2xl font-bold text-blue-600">
-                                ₱0.00
-                            </p>
+                            <h3 class="text-gray-500">Balance</h3> 
+                            @if($totalBalance > 0)
+                                <p id="balanceCard"  class="text-2xl font-bold text-cyan-400">
+                                    ₱ {{ number_format($totalBalance, 2) }}  
+                                </p>
+                            @else
+                                <p id="balanceCard"  class="text-2xl font-extrabold text-red-500 animate-pulse
+                                        drop-shadow-[0_0_20px_rgba(255,0,0,0.9)]
+                                        scale-105">
+                                    ₱ -{{ number_format(abs($totalBalance), 2) }}
+                                </p>
+                            @endif 
                         </div>
 
                         <div class="bg-white rounded shadow p-5">
                             <h3 class="text-gray-500">Credits</h3>
                             <p id="creditCard"
-                            class="text-2xl font-bold text-orange-600"> 
+                            class="text-2xl font-bold text-brown-600"> 
                                 ₱ {{ number_format($totalCredits, 2) }}  
                             </p>
                         </div>
@@ -85,13 +91,27 @@
                                 </span>
 
                             </div>
+                            <div id="expensesList" class="space-y-3">
+                                @forelse($expenses->take(5) as $expense)
+                                    <div class="flex justify-between items-center border-b pb-2">
+                                        <div>
+                                            <p class="font-medium">
+                                                {{ $expense->name ?? $expense->category ?? 'Expense' }}
+                                            </p>
+                                            <p class="text-sm text-gray-500">
+                                                {{ $expense->created_at->format('M d, Y') }}
+                                            </p>
+                                        </div>
 
-                            <div id="expensesList">
-
-                                <p class="text-gray-500 text-center py-6">
-                                    Loading expenses...
-                                </p>
-
+                                        <span class="font-bold text-red-600">
+                                            ₱{{ number_format($expense->amount, 2) }}
+                                        </span>
+                                    </div>
+                                @empty
+                                    <p class="text-center text-gray-500 py-4">
+                                        No expenses found.
+                                    </p>
+                                @endforelse
                             </div>
 
                         </div>
@@ -111,12 +131,28 @@
 
                             </div>
 
-                            <div id="creditsList">
+                            <div id="creditsList" class="space-y-3">
+                                @forelse($credits->take(5) as $credit)
+                                    <div class="flex justify-between items-center border-b pb-2">
+                                        <div>
+                                            <p class="font-medium">
+                                                {{ $credit->credit_name ?? $credit->name ?? 'Credit' }}
+                                            </p>
 
-                                <p class="text-gray-500 text-center py-6">
-                                    Loading credits...
-                                </p>
+                                            <p class="text-sm text-gray-500">
+                                                Remaining Balance
+                                            </p>
+                                        </div>
 
+                                        <span class="font-bold text-orange-600">
+                                            ₱{{ number_format($credit->remaining_balance, 2) }}
+                                        </span>
+                                    </div>
+                                @empty
+                                    <p class="text-center text-gray-500 py-4">
+                                        No credits found.
+                                    </p>
+                                @endforelse
                             </div>
 
                         </div>
@@ -143,59 +179,74 @@
 
                             </div>
 
-                            <div id="savingsList">
+                            <div id="savingsList" class="space-y-3">
+                                @forelse($savings->take(5) as $saving)
+                                    <div class="border-b pb-3">
+                                        <div class="flex justify-between mb-1">
+                                            <span class="font-medium">
+                                                {{ $saving->goal_name }}
+                                            </span>
 
-                                <p class="text-gray-500 text-center py-6">
-                                    Loading savings...
-                                </p>
+                                            <span class="font-bold text-purple-600">
+                                                ₱{{ number_format($saving->target_amount, 2) }}
+                                            </span>
+                                        </div>
 
+                                        <div class="text-sm text-gray-500">
+                                            {{ ucfirst($saving->frequency) }}
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-center text-gray-500 py-4">
+                                        No savings goals found.
+                                    </p>
+                                @endforelse
                             </div>
 
                         </div>
+ 
+                        <!-- Profit -->
+                        <div class="bg-white p-6 rounded shadow"> 
+                            <div class="flex justify-between items-center mb-4">
 
-                        <!-- Events -->
-                        <div class="bg-white rounded shadow">
-
-                            <div class="p-4 border-b">
-
-                                <h2 class="font-bold">
-                                    Upcoming Events
+                                <h2 class="text-xl font-bold">
+                                    Save from Income
                                 </h2>
 
-                            </div>
-
-                            <div class="overflow-x-auto">
-
-                                <table class="w-full">
-
-                                    <thead>
-
-                                    <tr class="bg-gray-100">
-
-                                        <th class="p-3 text-left">
-                                            Date
-                                        </th>
-
-                                        <th class="p-3 text-left">
-                                            Event
-                                        </th>
-
-                                    </tr>
-
-                                    </thead>
-
-                                    <tbody id="eventTable">
-
-                                    </tbody>
-
-                                </table>
+                                <span class="text-purple-600 font-semibold">
+                                    Progress
+                                </span>
 
                             </div>
 
-                        </div>
+                            <div id="savingsList" class="space-y-3">
+                                @forelse($savings->take(5) as $saving)
+                                    <div class="border-b pb-3">
+                                        <div class="flex justify-between mb-1">
+                                            <span class="font-medium">
+                                                {{ $saving->goal_name }}
+                                            </span>
 
+                                            <span class="font-bold text-purple-600">
+                                                ₱{{ number_format($saving->target_amount, 2) }}
+                                            </span>
+                                        </div>
+
+                                        <div class="text-sm text-gray-500">
+                                            {{ ucfirst($saving->frequency) }}
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-center text-gray-500 py-4">
+                                        No savings goals found.
+                                    </p>
+                                @endforelse
+
+
+                            </div> 
+                            
+                        </div>  
                     </div>
-
                     <!-- Recent Transactions -->
                     <div class="bg-white rounded shadow">
 
@@ -348,7 +399,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // =========================
     const income = {{ $incomeVsExpenses['income'] ?? 0 }};
     const expenses = {{ $incomeVsExpenses['expenses'] ?? 0 }};
-
+ 
     const incomeExpenseEl = document.getElementById('incomeExpenseChart');
 
     if (incomeExpenseEl) {

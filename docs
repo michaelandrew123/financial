@@ -87,3 +87,49 @@ if not working do it manually
 mkdir app/Services
 
 
+
+
+**PORTFOLIO**
+php artisan make:migration create_skill_categories_table 
+php artisan make:migration create_skills_table 
+php artisan make:migration create_experiences_table 
+php artisan make:migration create_experience_details_table 
+php artisan make:migration create_school_experiences_table  
+php artisan make:migration create_school_experience_details_table 
+php artisan make:migration create_seminars_table
+ 
+
+**Relationships**
+
+SkillCategory
+public function skills()
+{
+    return $this->hasMany(Skill::class);
+}
+Skill
+public function category()
+{
+    return $this->belongsTo(SkillCategory::class);
+}
+Experience
+public function details()
+{
+    return $this->hasMany(ExperienceDetail::class);
+}
+SchoolExperience
+public function details()
+{
+    return $this->hasMany(SchoolExperienceDetail::class);
+}
+
+
+php artisan make:controller PortfolioController
+
+
+php artisan make:model SkillCategory 
+php artisan make:model Skill 
+php artisan make:model Experience 
+php artisan make:model ExperienceDetail 
+php artisan make:model SchoolExperience 
+php artisan make:model SchoolExperienceDetail 
+php artisan make:model Seminar  

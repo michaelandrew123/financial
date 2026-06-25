@@ -87,6 +87,7 @@ class DashboardService
             ->unionAll(
                 DB::table('companies')
                     ->where('user_id', $user->id)
+                    ->where('is_active', true)
                     ->select(
                         'created_at as date',
                         DB::raw("'Income' as type"),
@@ -128,7 +129,19 @@ class DashboardService
             ->fromSub($recentTransactions, 't')
             ->orderByDesc('date')
             ->paginate(10);
-
+        $totalExpensesForCurrentMonth = $user->expenses()->whereBetween('created_at', [
+                now()->startOfMonth(),
+                now()->endOfMonth(),
+            ])->sum('amount');
+        $totalCompanyActiveIncome = $user->companies()->where('is_active', true)->sum('gross_salary');
+        
+        $expensesChartData = $user->expenses()
+        ->selectRaw('DATE(created_at) as date, SUM(amount) as total')
+        ->whereMonth('created_at', now()->month)
+        ->whereYear('created_at', now()->year)
+        ->groupBy('date')
+        ->orderBy('date')
+        ->get();
 
         return [
             'user' => $user, 
@@ -141,34 +154,27 @@ class DashboardService
                 ])
                 ->sum('target_amount'), 
             'savings' => $user->savings()
-            ->latest() 
-            ->paginate(10)
-            ->withQueryString(), 
+                ->latest() 
+                ->paginate(10)
+                ->withQueryString(), 
             'savingsTrend' => $savingsTrend, 
-            'companies' => $user->companies()->get(), 
-            // 'incomeVsExpenses' => [
-            //     'income' => $user->companies()
-            //         ->whereYear('created_at', now()->year)
-            //         ->sum('gross_salary'),
-            
-            //     'expenses' => $user->expenses()
-            //         ->whereYear('created_at', now()->year)
-            //         ->sum('amount'),
-            // ],
+            'companies' => $user->companies()->where('is_active', true)->get(),  
             'incomeVsExpenses' => [
-                'income' => $user->companies()->sum('gross_salary'),
+                'income' => $user->companies()->where('is_active', true)->sum('gross_salary') - $user->expenses()->sum('amount'),
                 'expenses' => $user->expenses()->sum('amount'),
             ],
-            'totalCompanyActiveIncome' => $user->companies->sum('gross_salary'),  
-            'expenses' => $user->expenses()->get(), 
-            'totalExpensesForCurrentMonth' => $user->companies->whereBetween('created_at', [
+            'totalCompanyActiveIncome' => $totalCompanyActiveIncome,  
+            'expenses' => $user->expenses()->latest()->get(), 
+            'totalExpensesForCurrentMonth' => $user->expenses()->whereBetween('created_at', [
                 now()->startOfMonth(),
                 now()->endOfMonth(),
             ])->sum('amount'),  
+            'totalBalance' => $totalCompanyActiveIncome - $totalExpensesForCurrentMonth,
             'credits' => $user->credits()->get(), 
             'totalCredits' => $user->credits()->sum('remaining_balance'),  
             'events' => $user->events()->get(), 
-            'recentTransactions' => $recentTransactions,
+            'recentTransactions' => $recentTransactions, 
+            'expensesChartData' =>$expensesChartData
         ];
 
 
