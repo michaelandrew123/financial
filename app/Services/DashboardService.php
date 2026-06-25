@@ -19,6 +19,40 @@ class DashboardService
             'events'
         ]); 
 
+
+
+        $monthlySavings = collect();
+        $expensesByMonth = $user->expenses()
+            ->selectRaw("
+                YEAR(created_at) as year,
+                MONTH(created_at) as month,
+                SUM(amount) as total_expenses
+            ")
+            ->groupBy('year', 'month')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
+        
+        $monthlyIncome = $user->companies()
+            ->where('is_active', true)
+            ->sum('gross_salary');
+        
+        $monthlySavings = $expensesByMonth->map(function ($item) use ($monthlyIncome) {
+            return [
+                'year' => $item->year,
+                'month' => Carbon::create()
+                    ->month($item->month)
+                    ->format('F'),
+                'income' => $monthlyIncome,
+                'expenses' => $item->total_expenses,
+                'savings' => $monthlyIncome - $item->total_expenses,
+            ];
+        });
+
+
+
+
+
         $savingsTrend = $user->savings()
             ->selectRaw('DATE(created_at) as date, SUM(target_amount) as total')
             ->whereYear('created_at', now()->year)
@@ -174,7 +208,8 @@ class DashboardService
             'totalCredits' => $user->credits()->sum('remaining_balance'),  
             'events' => $user->events()->get(), 
             'recentTransactions' => $recentTransactions, 
-            'expensesChartData' =>$expensesChartData
+            'expensesChartData' =>$expensesChartData,
+            'monthlySavings' => $monthlySavings,
         ];
 
 

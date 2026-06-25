@@ -8,6 +8,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,43 +24,66 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('/');
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Route::get('/dashboard', [DashboardController::class, 'index'])
+//     ->middleware(['auth', 'verified'])
+//     ->name('dashboard');
+
+// Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])
+//     ->name('financial');
 
 Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio');
+
+
+Route::middleware(['auth', 'admin'])->group(function () {
+
+    // Route::get('/admin/dashboard', function () {
+    //     return view('admin.dashboard');
+    // })
+    Route::prefix('admin/portfolio')->group(function(){
+        Route::get('/seminar', [AdminController::class, 'seminar'])->name('seminar.store');
+        Route::get('/work-experience', [AdminController::class, 'workExperience'])->name('work-experience.store');
+        Route::get('/school-experience', [AdminController::class, 'schoolExperience'])->name('school-experience.store');
+        Route::get('/skill', [AdminController::class, 'skill'])->name('skill.store');
+       
+    });
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin');
+    
+    Route::get('/admin/users', [UserController::class, 'index']);
+});
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
  
+    Route::prefix('financial')->group(function () { 
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+        
+        Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+        Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
 
+        Route::get('/savings', [SavingController::class, 'index'])->name('savings.index');
+        Route::post('/savings', [SavingController::class, 'create'])->name('savings.create'); 
+        Route::post('/savings', [SavingController::class, 'store'])->name('savings.store');
     
-    Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
-    Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
+        Route::get('/credits', [CreditController::class, 'index'])->name('credits.index');
+        Route::post('/credits', [CreditController::class, 'store'])->name('credits.store');
+        Route::put('/credits/{credit}', [CreditController::class, 'update'])->name('credits.update');
+        
+        Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
+        Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
+        Route::put('/companies/{company}', [CompanyController::class, 'update'])->name('companies.update');
+        
+        Route::get('/events', [EventController::class, 'index'])->name('events.index');
+        Route::post('/events', [EventController::class, 'store'])->name('events.store');
+    });
 
-
-    Route::get('/savings', [SavingController::class, 'index'])->name('savings.index');
-    Route::post('/savings', [SavingController::class, 'create'])->name('savings.create'); 
-    Route::post('/savings', [SavingController::class, 'store'])->name('savings.store');
- 
-    Route::get('/credits', [CreditController::class, 'index'])->name('credits.index');
-    Route::post('/credits', [CreditController::class, 'store'])->name('credits.store');
-    Route::put('/credits/{credit}', [CreditController::class, 'update'])->name('credits.update');
-    
-    Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
-    Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
-    Route::put('/companies/{company}', [CompanyController::class, 'update'])->name('companies.update');
-
-    
-    Route::get('/events', [EventController::class, 'index'])->name('events.index');
-    Route::post('/events', [EventController::class, 'store'])->name('events.store');
 });
 
 require __DIR__.'/auth.php';

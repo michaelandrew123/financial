@@ -133,3 +133,61 @@ php artisan make:model ExperienceDetail
 php artisan make:model SchoolExperience 
 php artisan make:model SchoolExperienceDetail 
 php artisan make:model Seminar  
+
+
+
+
+php artisan make:middleware AdminMiddleware
+app/Http/Middleware/AdminMiddleware.php
+if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+Kernel.php
+protected $middlewareAliases = [
+    'auth' => \App\Http\Middleware\Authenticate::class,
+    'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+
+    'admin' => \App\Http\Middleware\AdminMiddleware::class,
+
+    'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+];
+
+Admin Routes
+Route::middleware(['auth', 'admin'])->group(function () {
+
+    Route::get('/admin/dashboard', function () {
+        return view('admin.dashboard');
+    });
+
+    Route::get('/admin/users', [UserController::class, 'index']);
+});
+
+app/Models/User.php
+public function isAdmin(): bool
+{
+    return $this->role === 'admin';
+}
+
+public function isUser(): bool
+{
+    return $this->role === 'user';
+}
+
+Usage:
+php
+if (auth()->user()->isAdmin()) {
+    // admin logic
+}
+blade
+@if(auth()->user()->isAdmin())
+    <a href="{{ url('/admin/dashboard') }}">
+        Admin Dashboard
+    </a>
+@endif
+
+php artisan tinker
+update users:
+$user = App\Models\User::where('email', 'admin@example.com')->first(); 
+$user->role = 'admin'; 
+$user->save();

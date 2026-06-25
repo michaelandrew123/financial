@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('/') }}" class="py-5">
+                    <a href="{{ route('dashboard.index') }}" class="py-5">
                         FS
                         <!-- <x-application-logo class="block h-9 w-auto fill-current text-gray-800" /> -->
                     </a>
@@ -13,22 +13,23 @@
               
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-            
-                    @if(auth()->user()->isAdmin()) 
-                        <x-nav-link :href="route('admin')" :active="request()->routeIs('admin')">
-                            {{ __('Admin Panel') }}
-                        </x-nav-link> 
-                    @endif
-
  
-                    <!-- Navigation Links -->
-                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('expenses.index')" :active="request()->routeIs('expenses.index')">
+                        {{ __('Expenses') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('savings.index')" :active="request()->routeIs('savings.index')">
+                        {{ __('Savings') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('credits.index')" :active="request()->routeIs('credits.index')">
+                        {{ __('Credits') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('companies.index')" :active="request()->routeIs('companies.index')">
+                        {{ __('Companies') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('events.index')" :active="request()->routeIs('events.index')">
+                        {{ __('Events') }}
+                    </x-nav-link>
 
-                    <x-nav-link :href="route('dashboard.index')" :active="request()->routeIs('dashboard.index')">
-                        {{ __('Financial') }}
-                    </x-nav-link>  
-
-                    </div>
 
                 </div>
             </div>
@@ -81,7 +82,7 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('/')" :active="request()->routeIs('/')">
+            <x-responsive-nav-link :href="route('dashboard.index')" :active="request()->routeIs('dashboard.index')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
         </div>

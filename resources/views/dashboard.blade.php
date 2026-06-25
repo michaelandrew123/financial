@@ -13,7 +13,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mb-8">
 
                         <div class="bg-white rounded shadow p-5">
-                            <h3 class="text-gray-500">Total Income</h3>
+                            <h3 class="text-gray-500">Total Monthly Income</h3>
                             <p id="incomeCard" class="text-2xl font-bold text-green-600">
                                 ₱{{ number_format($totalCompanyActiveIncome, 2) }} 
                             </p>
@@ -219,32 +219,38 @@
 
                             </div>
 
-                            <div id="savingsList" class="space-y-3">
-                                @forelse($savings->take(5) as $saving)
-                                    <div class="border-b pb-3">
-                                        <div class="flex justify-between mb-1">
-                                            <span class="font-medium">
-                                                {{ $saving->goal_name }}
+                            <div id="monthlySavings" class="space-y-3">
+
+                                @forelse($monthlySavings as $record)
+
+                                    <div class="border rounded-lg p-4">
+                                        <div class="flex justify-between">
+                                            <span class="font-semibold">
+                                                {{ $record['month'] }} {{ $record['year'] }}
                                             </span>
 
-                                            <span class="font-bold text-purple-600">
-                                                ₱{{ number_format($saving->target_amount, 2) }}
+                                            <span class="text-green-600 font-bold">
+                                                ₱{{ number_format($record['savings'], 2) }}
                                             </span>
                                         </div>
 
-                                        <div class="text-sm text-gray-500">
-                                            {{ ucfirst($saving->frequency) }}
+                                        <div class="text-sm text-gray-500 mt-2">
+                                            Income:
+                                            ₱{{ number_format($record['income'], 2) }}
+                                            |
+                                            Expenses:
+                                            ₱{{ number_format($record['expenses'], 2) }}
                                         </div>
                                     </div>
+
                                 @empty
                                     <p class="text-center text-gray-500 py-4">
-                                        No savings goals found.
+                                        No monthly income savings found.
                                     </p>
                                 @endforelse
 
+                            </div>
 
-                            </div> 
-                            
                         </div>  
                     </div>
                     <!-- Recent Transactions -->
@@ -335,6 +341,17 @@
             </div>
         </div>
     </div> 
+
+
+    <div class="flex justify-center mt-16 px-0 sm:items-center sm:justify-between ">
+                    <div class="text-center text-sm sm:text-left">
+                        &nbsp;
+                    </div>
+
+                    <div class="text-center text-sm text-gray-500 dark:text-gray-400 sm:text-right sm:ml-0">
+                        Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
+                    </div>
+                </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

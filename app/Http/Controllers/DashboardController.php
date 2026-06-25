@@ -42,9 +42,8 @@ class DashboardController extends Controller
             'recentTransactions' => $data['recentTransactions'],
 
             'expensesChartData' => $data['expensesChartData'],
+            'monthlySavings' => $data['monthlySavings'],
         ]);
-
-
-        // return view('dashboard', compact('user'));
+ 
     } 
 }
