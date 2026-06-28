@@ -10,14 +10,21 @@ class CompanyController extends Controller
 {
     /**
      * Display a listing of the resource.
-     */
-    public function index() : View
+     */ 
+
+    public function index(): View
     {
-      
-        $user = auth()->user();  
+        $user = auth()->user();
+
         return view('companies.index', [
-            'user'=>$user,
-            'companies'=>$user->companies()->latest()->get()
+            'user' => $user,
+            'companies' => $user->companies()
+                ->with([
+                    'salaries' => fn ($query) =>  $query->orderBy('created_at', 'desc')
+                    // $query->latest('effective_date')
+                ])
+                ->orderBy('created_at', 'desc')
+                ->get(),
         ]);
     }
 

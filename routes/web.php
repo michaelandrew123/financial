@@ -8,7 +8,8 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\PortfolioController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminController; 
+use App\Http\Controllers\CompanySalaryController; 
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,9 +27,9 @@ Route::get('/', function () {
     return view('welcome');
 })->name('/');
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', function () {
+    return view('profile.dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 // Route::get('/dashboard', [DashboardController::class, 'index'])
 //     ->middleware(['auth', 'verified'])
 //     ->name('dashboard');
@@ -63,7 +64,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
  
     Route::prefix('financial')->group(function () { 
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('financial.dashboard');
         
         Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
         Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
@@ -79,6 +80,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
         Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
         Route::put('/companies/{company}', [CompanyController::class, 'update'])->name('companies.update');
+        Route::post('/companies/salary', [CompanySalaryController::class, 'store'])->name('company.salary.store');
         
         Route::get('/events', [EventController::class, 'index'])->name('events.index');
         Route::post('/events', [EventController::class, 'store'])->name('events.store');

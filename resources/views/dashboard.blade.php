@@ -13,14 +13,14 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mb-8">
 
                         <div class="bg-white rounded shadow p-5">
-                            <h3 class="text-gray-500">Total Monthly Income</h3>
+                            <h3 class="text-gray-500">Monthly Income</h3>
                             <p id="incomeCard" class="text-2xl font-bold text-green-600">
                                 ₱{{ number_format($totalCompanyActiveIncome, 2) }} 
                             </p>
                         </div>
 
                         <div class="bg-white rounded shadow p-5">
-                            <h3 class="text-gray-500">Total Expenses: {{ \Carbon\Carbon::now()->format('F d, Y') }}</h3>
+                            <h3 class="text-gray-500">Expenses: {{ \Carbon\Carbon::now()->format('F d, Y') }}</h3>
                           
                                 <p class="text-2xl font-bold text-blue-400">
                                     ₱ {{ number_format($totalExpensesForCurrentMonth, 2) }}

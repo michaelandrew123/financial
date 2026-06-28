@@ -5,6 +5,19 @@ php artisan make:migration add_status_to_savings_table
 
 
 php artisan make:migration create_companies_table
+php artisan make:migration create_company_salaries_table
+
+CompanySalary::where('company_id', $company->id)
+    ->update(['is_current' => false]);
+
+CompanySalary::create([
+    'company_id' => $company->id,
+    'gross_salary' => 35000,
+    'frequency' => 'monthly',
+    'effective_date' => now(),
+    'is_current' => true,
+]);
+
 
 **if table already exist and want to add column**
 php artisan make:migration add_salary_fields_to_companies_table --table=companies

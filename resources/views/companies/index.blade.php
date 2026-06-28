@@ -30,11 +30,16 @@
         </h2>
     </x-slot> 
     <div   
-        x-data="{
+        x-data="{ 
+            openViewTransaction: false,
             openCreate: false,
             openEdit: false,
-            editCompany: {}
+            openCreateTransaction: false,
+            selectedCompany: {},
+            editCompany: {}, 
+            transactions: []
         }" 
+ 
         class="py-12">
         
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6"> 
@@ -92,7 +97,7 @@
 
                          
                                 <div class="flex justify-between">
-                                    <span class="text-gray-500">Gross Salary</span>
+                                    <span class="text-gray-500">Gross Salary Estimated </span>
                                     <span class="font-semibold text-green-600">
                                         ₱{{ number_format($company->gross_salary, 2) }}
                                     </span>
@@ -113,25 +118,67 @@
 
                             </div>
 
-                            <div class="mt-5 pt-4 border-t">
-                                <button
+                            <div class="mt-5 pt-4 border-t flex flex-col gap-2 justify-between"> 
+                                <div class="flex flex-row justify-between gap-2" > 
+                                    
+                                    <x-secondary-button
+                                        @click="
+                                            selectedCompany = {
+                                                id: {{ $company->id }},
+                                                name: {{ Js::from($company->name) }},
+                                            };
+                                            openCreateTransaction = true;
+                                        "
+                                    >
+                                        Add Transaction
+                                    </x-secondary-button> 
+                                    <button
+                                        @click="
+                                            editCompany = {
+                                                id: {{ $company->id }},
+                                                name: @js($company->name),
+                                                address: @js($company->address),
+                                                email: @js($company->email),
+                                                gross_salary: '{{ $company->gross_salary }}',
+                                                frequency: '{{ $company->frequency }}',
+                                                effective_date: '{{ $company->effective_date?->format('Y-m-d') }}',
+                                                is_active: @js((bool) $company->is_active),
+                                            };
+                                            openEdit = true;
+                                        "
+                                        class="w-full px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600"
+                                    >
+                                        Edit 
+                                    </button> 
+                                </div>
+
+
+                      
+                                <x-primary-button
+                                    class="w-full justify-center"
                                     @click="
-                                        editCompany = {
+                                        selectedCompany = {
                                             id: {{ $company->id }},
-                                            name: @js($company->name),
-                                            address: @js($company->address),
-                                            email: @js($company->email),
-                                            gross_salary: '{{ $company->gross_salary }}',
-                                            frequency: '{{ $company->frequency }}',
-                                            effective_date: '{{ $company->effective_date?->format('Y-m-d') }}'
-                                            is_active: @js((bool) $company->is_active),
+                                            name: {{ Js::from($company->name) }},
                                         };
-                                        openEdit = true;
+
+                                        transactions = {{ Js::from(
+                                            $company->salaries->map(function ($salary) {
+                                                return [
+                                                    'gross_salary' => $salary->gross_salary,
+                                                    'frequency' => ucfirst($salary->frequency),
+                                                    'effective_date' => optional($salary->effective_date)->format('M d, Y'),
+                                                    'is_current' => $salary->is_current,
+                                                ];
+                                            })
+                                        ) }};
+
+                                        openViewTransaction = true;
                                     "
-                                    class="w-full px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600"
                                 >
-                                    Edit Company
-                                </button>
+                                    View Transaction
+                                </x-primary-button>
+
                             </div>
                         </div>
                     @empty
@@ -140,15 +187,207 @@
                         </div>
                     @endforelse
                 </div>
-
-
-
-
+ 
 
             </div> 
         </div>
 
+        <!-- view modal for company salary  --> 
+        <div
+            x-show="openViewTransaction"
+            x-transition
+            @click.self="openViewTransaction = false"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+            x-cloak
+        >
+            <div class="bg-white rounded-lg shadow-lg w-full max-w-5xl">
 
+                <div class="flex justify-between items-center border-b px-6 py-4">
+                    <div>
+                        <h2 class="text-xl font-semibold">
+                            Salary Transactions
+                        </h2>
+
+                        <p class="text-gray-500" x-text="selectedCompany.name"></p>
+                    </div>
+
+                    <button
+                        @click="openViewTransaction = false"
+                        class="text-gray-500 hover:text-gray-700 text-xl"
+                    >
+                        ✕
+                    </button>
+                </div>
+
+                <div class="p-6 overflow-x-auto">
+
+                    <table class="min-w-full divide-y divide-gray-200 border rounded-lg">
+
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left font-semibold">
+                                    Gross Salary
+                                </th>
+
+                                <th class="px-4 py-3 text-left font-semibold">
+                                    Frequency
+                                </th>
+
+                                <th class="px-4 py-3 text-left font-semibold">
+                                    Effective Date
+                                </th>
+
+                                <th class="px-4 py-3 text-center font-semibold">
+                                    Status
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-gray-200">
+
+                            <template x-if="transactions.length === 0">
+                                <tr>
+                                    <td
+                                        colspan="4"
+                                        class="text-center py-6 text-gray-500"
+                                    >
+                                        No salary history found.
+                                    </td>
+                                </tr>
+                            </template>
+
+                            <template
+                                x-for="(transaction, index) in transactions"
+                                :key="index"
+                            >
+                                <tr class="hover:bg-gray-50">
+
+                                    <td class="px-4 py-3 text-green-600 font-semibold">
+                                        ₱<span x-text="
+                                            Number(transaction.gross_salary).toLocaleString(
+                                                'en-PH',
+                                                {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2
+                                                }
+                                            )
+                                        "></span>
+                                    </td>
+
+                                    <td class="px-4 py-3">
+                                        <span x-text="transaction.frequency"></span>
+                                    </td>
+
+                                    <td class="px-4 py-3">
+                                        <span x-text="transaction.effective_date"></span>
+                                    </td>
+
+                                    <td class="px-4 py-3 text-center">
+
+                                        <span
+                                            x-show="transaction.is_current"
+                                            class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700"
+                                        >
+                                            Current
+                                        </span>
+
+                                        <span
+                                            x-show="!transaction.is_current"
+                                            class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700"
+                                        >
+                                            Old
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                            </template>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div class="border-t px-6 py-4 flex justify-end">
+
+                    <x-secondary-button
+                        @click="openViewTransaction = false"
+                    >
+                        Close
+                    </x-secondary-button>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- create modal for company salary                                          -->
+        <div 
+            x-show="openCreateTransaction"
+            x-transition
+            @click.self="openCreateTransaction = false"
+            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+            x-cloak >
+            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+
+                <h2 class="text-lg font-semibold mb-4">
+                    Add Transaction for   <span x-text="selectedCompany.name"></span>
+                </h2>
+
+                <form method="POST" action="{{ route('company.salary.store') }}">
+                    @csrf   
+                    <input type="hidden" name="company_id" :value="selectedCompany.id">
+                    <div class="mb-3">
+                        <x-input-label for="gross_salary" value="How much salary you received today?" />
+                        <x-text-input
+                            id="gross_salary"
+                            name="gross_salary"
+                            type="number"
+                            step="0.01"
+                            class="w-full"
+                            required
+                        />
+                    </div>
+
+                    <!-- frequency -->
+                    <div class="mb-3">
+                        <x-input-label for="frequency" value="Pay Frequency" />
+                        <select
+                            id="frequency"
+                            name="frequency"
+                            class="w-full border-gray-300 rounded-md shadow-sm"
+                        >
+                            <option value="weekly">Weekly</option>
+                            <option value="biweekly">Biweekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <x-input-label for="effective_date" value="" />
+                        <x-text-input
+                            id="effective_date"
+                            name="effective_date"
+                            type="date"
+                            class="w-full"
+                        />
+                    </div>
+
+
+                    <div class="flex justify-end gap-2 mt-4"> 
+                        <button
+                            type="submit"
+                            class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                        >
+                            Save 
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div> 
+ 
         <!-- Create Modal -->
         <div 
             x-show="openCreate"
@@ -251,10 +490,7 @@
                 </form>
             </div>
         </div> 
-
-
-
-
+ 
         <!-- update Modal -->
         <div
             x-show="openEdit"
@@ -380,6 +616,9 @@
                 </form>
             </div>
         </div>
+
+
+
     </div>
 
 
