@@ -5,28 +5,95 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\Company;
+use Carbon\Carbon;
+use App\Models\CompanySalary;
+
 
 class CompanyController extends Controller
 {
     /**
      * Display a listing of the resource.
      */ 
-
     public function index(): View
     {
         $user = auth()->user();
-
+    
+        $companies = $user->companies()
+            ->with('salaries')
+            ->orderByDesc('created_at')
+            ->get();
+    
+        foreach ($companies as $company) {
+    
+            foreach ($company->salaries as $salary) {
+    
+                $start = Carbon::parse($salary->effective_date);
+    
+                // Find the current pay period
+                while (true) {
+    
+                    $next = match ($salary->frequency) {
+                        'weekly'   => $start->copy()->addWeek(),
+                        'biweekly' => $start->copy()->addWeeks(2),
+                        'monthly'  => $start->copy()->addMonth(),
+                    };
+    
+                    if ($next->gt(now())) {
+                        break;
+                    }
+    
+                    $start = $next;
+                }
+    
+                $end = match ($salary->frequency) {
+                    'weekly'   => $start->copy()->addWeek(),
+                    'biweekly' => $start->copy()->addWeeks(2),
+                    'monthly'  => $start->copy()->addMonth(),
+                };
+    
+                $totalExpenses = $user->expenses()
+                    ->whereBetween('created_at', [$start, $end])
+                    ->sum('amount');
+    
+                // Append computed values
+                $salary->total_expenses = $totalExpenses;
+                $salary->remaining_balance = $salary->gross_salary - $totalExpenses;
+                $salary->pay_period_start = $start->format('M d, Y');
+                $salary->pay_period_end = $end->format('M d, Y');
+            }
+    
+            // Sort salaries newest first
+            $company->setRelation(
+                'salaries',
+                $company->salaries
+                    ->sortByDesc('created_at')
+                    ->values()
+            );
+        }
+    
         return view('companies.index', [
             'user' => $user,
-            'companies' => $user->companies()
-                ->with([
-                    'salaries' => fn ($query) =>  $query->orderBy('created_at', 'desc')
-                    // $query->latest('effective_date')
-                ])
-                ->orderBy('created_at', 'desc')
-                ->get(),
+            'companies' => $companies,
         ]);
     }
+
+
+    // public function index(): View
+    // {
+    //     $x = auth()->user();
+  
+    //     return view('companies.index', [
+    //         'user' => $user,
+    //         'companies' => $user->companies()
+    //             ->with([
+    //                 'salaries' => fn ($query) =>  $query->orderBy('created_at', 'desc') 
+    //             ])
+    //             ->orderBy('created_at', 'desc')
+    //             ->get(),
+
+ 
+    //     ]);
+    // }
 
     /**
      * Show the form for creating a new resource.

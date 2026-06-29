@@ -18,8 +18,7 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $data = $this->dashboardService
-            ->getDashboardData($request->user());
-        
+            ->getDashboardData($request->user()); 
  
         return view('dashboard', [
             'user' => $data['user'],
@@ -43,6 +42,12 @@ class DashboardController extends Controller
 
             'expensesChartData' => $data['expensesChartData'],
             'monthlySavings' => $data['monthlySavings'],
+ 
+            'totalSalary' => $data['totalSalary'],
+            'frequency' => $data['frequency'],
+            'totalExpenses' => $data['totalExpenses'],
+            'effective_date' => $data['effective_date'],
+            'remainingSalary' => $data['remainingSalary'], 
         ]);
  
     } 

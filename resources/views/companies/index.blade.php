@@ -260,9 +260,12 @@
                                 x-for="(transaction, index) in transactions"
                                 :key="index"
                             >
-                                <tr class="hover:bg-gray-50">
+                                <tr class="hover:bg-gray-50" :class="transaction.is_current ? 'text-green-600' : 'text-red-600'">
 
-                                    <td class="px-4 py-3 text-green-600 font-semibold">
+                                    <td 
+                                        class="px-4 py-3 font-semibold"
+                                        
+                                    >
                                         ₱<span x-text="
                                             Number(transaction.gross_salary).toLocaleString(
                                                 'en-PH',
@@ -293,9 +296,9 @@
 
                                         <span
                                             x-show="!transaction.is_current"
-                                            class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700"
+                                            class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-medium "
                                         >
-                                            Old
+                                            --
                                         </span>
 
                                     </td>

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Models\CompanySalary;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
@@ -17,9 +18,71 @@ class DashboardService
             'expenses',
             'credits',
             'events'
-        ]); 
+        ]);  
+      
+
+        // $companySalaries = CompanySalary::whereHas('company', function ($query) use ($user) {
+        //     $query->where('user_id', $user->id);
+        // })
+        // ->where('is_current', true)
+        // ->get();
+        
 
 
+
+        // $totalSalary = $companySalaries->sum('gross_salary');
+        
+
+        $salary = CompanySalary::whereHas('company', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+        ->where('is_current', true)
+        ->first();
+ 
+
+        if ($salary) {
+
+            $start = Carbon::parse($salary->effective_date);
+
+            // Find the current pay period
+            while (true) {
+
+                $next = match ($salary->frequency) {
+                    'weekly'   => $start->copy()->addWeek(),
+                    'biweekly' => $start->copy()->addWeeks(2),
+                    'monthly'  => $start->copy()->addMonth(),
+                };
+
+                if ($next->gt(now())) {
+                    break;
+                }
+
+                $start = $next;
+            }
+
+            $end = match ($salary->frequency) {
+                'weekly'   => $start->copy()->addWeek(),
+                'biweekly' => $start->copy()->addWeeks(2),
+                'monthly'  => $start->copy()->addMonth(),
+            };
+
+            $totalExpenses = $user->expenses()
+                ->whereBetween('created_at', [$start, $end])
+                ->sum('amount');
+
+            $remainingSalary = $salary->gross_salary - $totalExpenses;
+
+        } else {
+            $totalExpenses = 0;
+            $remainingSalary = 0;
+        }
+
+
+
+        // foreach ($companySalaries as $salary) {
+        //     echo $salary->gross_salary;
+        //     echo $salary->frequency;
+        // }
 
         $monthlySavings = collect();
         $expensesByMonth = $user->expenses()
@@ -48,11 +111,7 @@ class DashboardService
                 'savings' => $monthlyIncome - $item->total_expenses,
             ];
         });
-
-
-
-
-
+ 
         $savingsTrend = $user->savings()
             ->selectRaw('DATE(created_at) as date, SUM(target_amount) as total')
             ->whereYear('created_at', now()->year)
@@ -163,10 +222,13 @@ class DashboardService
             ->fromSub($recentTransactions, 't')
             ->orderByDesc('date')
             ->paginate(10);
+
         $totalExpensesForCurrentMonth = $user->expenses()->whereBetween('created_at', [
                 now()->startOfMonth(),
                 now()->endOfMonth(),
             ])->sum('amount');
+
+
         $totalCompanyActiveIncome = $user->companies()->where('is_active', true)->sum('gross_salary');
         
         $expensesChartData = $user->expenses()
@@ -199,6 +261,8 @@ class DashboardService
             ],
             'totalCompanyActiveIncome' => $totalCompanyActiveIncome,  
             'expenses' => $user->expenses()->latest()->get(), 
+
+
             'totalExpensesForCurrentMonth' => $user->expenses()->whereBetween('created_at', [
                 now()->startOfMonth(),
                 now()->endOfMonth(),
@@ -210,6 +274,13 @@ class DashboardService
             'recentTransactions' => $recentTransactions, 
             'expensesChartData' =>$expensesChartData,
             'monthlySavings' => $monthlySavings,
+
+            'totalSalary' => $salary->gross_salary,
+            'frequency' => $salary->frequency,
+            'totalExpenses' => $totalExpenses,   
+            'effective_date' => $salary->effective_date,   
+            'remainingSalary' => $remainingSalary,
+        
         ];
 
 
