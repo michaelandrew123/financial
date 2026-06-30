@@ -108,7 +108,7 @@
                         <tbody> 
                             @forelse ($expenses as $expense)  
                                 <tr class="border-b">
-                                    <td class="p-2">{{ $expense->expense_name}}</td>
+                                    <td class="p-2">{{ $expense->title}}</td>
                                     <td class="p-2">{{ number_format($expense->amount, 2) }}</td>
                                     <td class="p-2"> 
 
@@ -153,13 +153,13 @@
                     @csrf  
                     <!-- "Expense Name -->
                     <div class="mb-3">
-                        <x-input-label for="expense_name" value="Expense Name" />
+                        <x-input-label for="expense_name" value="Expense Title" />
                         <x-text-input
-                            id="expense_name"
-                            name="expense_name"
+                            id="title"
+                            name="title"
                             class="w-full"
                             required
-                            placeholder="Expense Name"
+                            placeholder="Expense Title"
                         />
                     </div>
 
@@ -176,7 +176,32 @@
                             placeholder="Enter amount"
                         />
                     </div>
- 
+                    <div class="mb-3">
+                        <x-input-label
+                            for="company_salary_id"
+                            value="Salary Transaction"
+                        />
+
+                        <select
+                            id="company_salary_id"
+                            name="company_salary_id"
+                            class="w-full border-gray-300 rounded-md shadow-sm"
+                            required
+                        >
+                            <option value="">-- Select Salary --</option>
+
+                            @foreach ($companySalaries as $salary)
+                                <option value="{{ $salary->id }}">
+                                    {{ $salary->company->name }}
+                                    —
+                                    ₱{{ number_format($salary->gross_salary, 2) }}
+                                    (
+                                    {{ $salary->effective_date->format('M d, Y') }}
+                                    )
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
                     <!-- Period -->
                     <div class="mb-3">

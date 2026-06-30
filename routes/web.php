@@ -81,7 +81,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
         Route::put('/companies/{company}', [CompanyController::class, 'update'])->name('companies.update');
         Route::post('/companies/salary', [CompanySalaryController::class, 'store'])->name('company.salary.store');
-        
+        Route::put('/company-salaries/{companySalary}', [CompanySalaryController::class, 'update'])->name('company.salary.update');
+
+
         Route::get('/events', [EventController::class, 'index'])->name('events.index');
         Route::post('/events', [EventController::class, 'store'])->name('events.store');
     });

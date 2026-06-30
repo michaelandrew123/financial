@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request; 
 use Illuminate\View\View;
+use App\Models\CompanySalary;
 class ExpenseController extends Controller
 {
     /**
@@ -33,7 +34,12 @@ class ExpenseController extends Controller
             ])->sum('amount'),
             'previousMonthExpenses' => $previousMonthExpenses,
             'activeTransaction' => $activeTransaction,
-            'expenses' => $user->expenses()->latest()->orderByDesc('created_at')->paginate(10)
+            'expenses' => $user->expenses()->latest()->orderByDesc('created_at')->paginate(10),
+ 
+            'companySalaries'=>CompanySalary::whereHas('company', function($query) use ($user){
+                $query->where('user_id', $user->id);
+            })->with('company')->latest()->get(),
+
         ]);
     }
 
@@ -52,14 +58,22 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'expense_name' => ['required', 'string', 'max:255'],
+            'company_salary_id' => [
+                'required',
+                'exists:company_salaries,id',
+            ],
+            'title' => ['required', 'string', 'max:255'],
             'amount' => ['required', 'numeric', 'min:0'], 
             'period' => ['nullable', 'date', 'after_or_equal:today'], 
             'notes' => ['required', 'string', 'max:2000'],
         ]); 
-    
+        // Ensure the selected salary belongs to the authenticated user
+        $salary = CompanySalary::whereHas('company', function ($query) {
+            $query->where('user_id', auth()->id());
+        })->findOrFail($validated['company_salary_id']);
+   
         auth()->user()->expenses()->create($validated);
-    
+     
         return redirect()->back()->with('success', 'Credit added successfully!');
     }
 

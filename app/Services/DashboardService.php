@@ -58,7 +58,7 @@ class DashboardService
                 }
 
                 $start = $next;
-            }
+            } 
 
             $end = match ($salary->frequency) {
                 'weekly'   => $start->copy()->addWeek(),
@@ -67,6 +67,7 @@ class DashboardService
             };
 
             $totalExpenses = $user->expenses()
+                ->where('company_salary_id', $salary->id)
                 ->whereBetween('created_at', [$start, $end])
                 ->sum('amount');
 
@@ -275,10 +276,10 @@ class DashboardService
             'expensesChartData' =>$expensesChartData,
             'monthlySavings' => $monthlySavings,
 
-            'totalSalary' => $salary->gross_salary,
-            'frequency' => $salary->frequency,
+            'totalSalary' => $salary->gross_salary ?? 0,
+            'frequency' => $salary->frequency ?? '',
             'totalExpenses' => $totalExpenses,   
-            'effective_date' => $salary->effective_date,   
+            'effective_date' => $salary->effective_date ?? null,   
             'remainingSalary' => $remainingSalary,
         
         ];

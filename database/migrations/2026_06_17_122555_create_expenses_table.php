@@ -17,7 +17,12 @@ return new class extends Migration
             ->constrained()
             ->cascadeOnDelete(); 
 
-            $table->string('expense_name');
+            
+            $table->foreignId('company_salary_id')
+            ->constrained()
+            ->cascadeOnDelete();  
+
+            $table->string('title');
             $table->decimal('amount', 12, 2);
             $table->date('period');
             $table->text('notes')->nullable();

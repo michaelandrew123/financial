@@ -47,11 +47,7 @@ class CompanySalaryController extends Controller
             //         'is_current' => false,
             //     ]);
             // }
-            $company->salaries()
-            ->where('is_current', true)
-            ->update([
-                'is_current' => false,
-            ]);
+          
 
             $company->salaries()->create([
                 'gross_salary'   => $validated['gross_salary'],
@@ -85,8 +81,35 @@ class CompanySalaryController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        //
+    { 
+        $salary = CompanySalary::findOrFail($id);
+
+        $salary->update([
+            'is_current' => ! $salary->is_current,
+        ]);
+ 
+        // DB::transaction(function () use ($salary) {
+    
+            // if ($salary->is_current) {
+            //     CompanySalary::where('company_id', $salary->company_id)
+            //     ->update([
+            //         'is_current' => true,
+            //     ]); 
+            // } else { 
+            //     CompanySalary::where('company_id', $salary->company_id)
+            //         ->update([
+            //             'is_current' => false,
+            //         ]); 
+            // } 
+            // CompanySalary::where('company_id', $salary->company_id)->update([
+            //     'is_current' => !$salary->is_current,
+            // ]);
+
+
+    
+        // });
+    
+        return back()->with('success', 'Salary status updated successfully.');
     }
 
     /**

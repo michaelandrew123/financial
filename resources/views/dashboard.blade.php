@@ -16,7 +16,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mb-8">
 
                         <div class="bg-white rounded shadow p-5"> 
-                            <h3 class="text-gray-500">{{ ucfirst($totalSalary) }} Income</h3>
+                            <h3 class="text-gray-500">{{ucfirst($frequency)}} Income: {{ ucfirst($totalSalary) }}</h3>
                             <p class="text-2xl font-bold text-green-600">
                                 ₱{{ number_format($totalSalary, 2) }} 
                             </p>  
@@ -27,11 +27,11 @@
                                 Expenses
                             </h3> 
                             <p class="text-2xl font-bold text-blue-400">
-                                ₱ {{ number_format($totalExpenses, 2) }}
+                                ₱ {{ number_format($totalExpenses ?? 0, 2) }}
                             </p>  
                             <p class="text-center text-blue-900 font-bold "> 
                                 <small>  
-                                    {{ $effective_date->format('M d, Y')}}  
+                                    {{ $effective_date?->format('M d, Y')}}  
                                 </small>
                             </p> 
                         </div>
@@ -41,6 +41,11 @@
                             @if($totalBalance > 0)
                                 <p id="balanceCard"  class="text-2xl font-bold text-cyan-400">
                                     ₱ {{ number_format($remainingSalary, 2) }}  
+                                </p>
+                            @elseif($totalBalance == 0)
+                            
+                                <p id="balanceCard"  class="text-2xl font-extrabold text-red-500 ">
+                                    ₱ {{ number_format(abs($remainingSalary), 2) }}
                                 </p>
                             @else
                                 <p id="balanceCard"  class="text-2xl font-extrabold text-red-500 animate-pulse

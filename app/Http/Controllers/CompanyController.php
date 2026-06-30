@@ -52,10 +52,10 @@ class CompanyController extends Controller
                 };
     
                 $totalExpenses = $user->expenses()
+                    ->where('company_salary_id', $salary->id)
                     ->whereBetween('created_at', [$start, $end])
                     ->sum('amount');
-    
-                // Append computed values
+     
                 $salary->total_expenses = $totalExpenses;
                 $salary->remaining_balance = $salary->gross_salary - $totalExpenses;
                 $salary->pay_period_start = $start->format('M d, Y');
@@ -71,6 +71,7 @@ class CompanyController extends Controller
             );
         }
     
+ 
         return view('companies.index', [
             'user' => $user,
             'companies' => $companies,
@@ -80,8 +81,7 @@ class CompanyController extends Controller
 
     // public function index(): View
     // {
-    //     $x = auth()->user();
-  
+    //     $x = auth()->user(); 
     //     return view('companies.index', [
     //         'user' => $user,
     //         'companies' => $user->companies()
@@ -89,9 +89,7 @@ class CompanyController extends Controller
     //                 'salaries' => fn ($query) =>  $query->orderBy('created_at', 'desc') 
     //             ])
     //             ->orderBy('created_at', 'desc')
-    //             ->get(),
-
- 
+    //             ->get(), 
     //     ]);
     // }
 

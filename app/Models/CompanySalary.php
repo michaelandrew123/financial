@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class CompanySalary extends Model
 {
     use HasFactory;
+
+    protected $table = 'company_salaries';
+
     protected $fillable = [
         'company_id', 
         'gross_salary',
@@ -23,5 +26,9 @@ class CompanySalary extends Model
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(Expense::class);
     }
 }

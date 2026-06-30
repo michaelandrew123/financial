@@ -165,10 +165,15 @@
                                         transactions = {{ Js::from(
                                             $company->salaries->map(function ($salary) {
                                                 return [
+                                                    'id' => $salary->id,
                                                     'gross_salary' => $salary->gross_salary,
                                                     'frequency' => ucfirst($salary->frequency),
                                                     'effective_date' => optional($salary->effective_date)->format('M d, Y'),
                                                     'is_current' => $salary->is_current,
+                                                    'total_expenses' => $salary->total_expenses,
+                                                    'remaining_balance' => $salary->remaining_balance,
+                                                    'pay_period_start' => $salary->pay_period_start,
+                                                    'pay_period_end' => $salary->pay_period_end,
                                                 ];
                                             })
                                         ) }};
@@ -237,8 +242,18 @@
                                     Effective Date
                                 </th>
 
+                                <th class="px-4 py-3 text-left font-semibold">
+                                    Expenses
+                                </th>
+
+                                <th class="px-4 py-3 text-left font-semibold">
+                                    Remaining Balance
+                                </th>
                                 <th class="px-4 py-3 text-center font-semibold">
                                     Status
+                                </th>
+                                <th class="px-4 py-3 text-center">
+                                    Action
                                 </th>
                             </tr>
                         </thead>
@@ -284,7 +299,23 @@
                                     <td class="px-4 py-3">
                                         <span x-text="transaction.effective_date"></span>
                                     </td>
+                                    <td class="px-4 py-3">
+                                        ₱<span x-text="
+                                            Number(transaction.total_expenses).toLocaleString('en-PH', {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2
+                                            })
+                                        "></span>
+                                    </td>
 
+                                    <td class="px-4 py-3 font-semibold">
+                                        ₱<span x-text="
+                                            Number(transaction.remaining_balance).toLocaleString('en-PH', {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2
+                                            })
+                                        "></span>
+                                    </td>
                                     <td class="px-4 py-3 text-center">
 
                                         <span
@@ -302,7 +333,49 @@
                                         </span>
 
                                     </td>
+                                    
+                                    
+                                    <td class="px-4 py-3 text-center">
+ 
+                                        <!-- <template x-if="!transaction.is_current"> -->
+                                        
+                                            <form
+                                                method="POST"
+                                                :action="`{{ url('/financial/company-salaries') }}/${transaction.id}`"
+                                            >
+                                                @csrf
+                                                @method('PUT')
 
+                                                <button
+                                                    type="submit"
+                                                    class="px-3 py-1 rounded"
+                                                    :class="transaction.is_current
+                                                        ? 'bg-red-600 text-white hover:bg-red-700'
+                                                        : 'bg-green-600 text-white hover:bg-green-700'"
+                                                    x-text="transaction.is_current ? 'Unset Current' : 'Set Current'"
+                                                ></button>
+                                            </form> 
+<!-- 
+                                        <template x-if="transaction.is_current"> 
+                                                <form
+                                                    method="POST"
+                                                    :action="`{{ url('/financial/company-salaries') }}/${transaction.id}`"
+                                                >
+                                                    @csrf
+                                                    @method('PUT')
+
+                                                    <button
+                                                        type="submit"
+                                                        class="px-3 py-1 rounded"
+                                                        :class="transaction.is_current
+                                                            ? 'bg-red-600 text-white hover:bg-red-700'
+                                                            : 'bg-green-600 text-white hover:bg-green-700'"
+                                                        x-text="transaction.is_current ? 'Unset Current' : 'Set Current'"
+                                                    ></button>
+                                                </form> 
+                                        </template> -->
+
+                                    </td>
                                 </tr>
 
                             </template>
@@ -509,7 +582,7 @@
                 </h2>
  
                 <form
-                    :action="'/companies/' + editCompany.id"
+                    :action="'/financial/companies/' + editCompany.id"
                     method="POST"
                 >
                     @csrf
