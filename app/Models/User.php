@@ -85,4 +85,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(Event::class);
     }
+
+
+
+    // portfolio
+    public function seminar(): HasMany
+    {
+        return $this->hasMany(Seminar::class, 'user_id');
+    } 
+    public function experience(): HasMany
+    {
+        return $this->hasMany(Experience::class, 'user_id');
+    }
+    public function skill(): HasMany
+    {
+        return $this->hasMany(Skill::class, 'user_id');
+    }
 }

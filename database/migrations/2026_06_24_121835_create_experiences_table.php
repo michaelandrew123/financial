@@ -14,8 +14,15 @@ return new class extends Migration
         Schema::create('experiences', function (Blueprint $table) {
             $table->id();
                     
+            $table->foreignId('user_id')
+            ->constrained()
+            ->cascadeOnDelete(); 
+            
+            $table->string('position');
             $table->string('company');
             $table->string('location')->nullable(); 
+            $table->text('description');
+            $table->boolean('still_in_role')->default(false);
             $table->string('start_date')->nullable();
             $table->string('end_date')->nullable();
 

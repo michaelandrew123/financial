@@ -14,12 +14,17 @@ return new class extends Migration
         Schema::create('school_experiences', function (Blueprint $table) {
             $table->id();
             
+            $table->foreignId('user_id')
+            ->constrained()
+            ->cascadeOnDelete(); 
+ 
             $table->string('company');
             $table->string('department')->nullable();
             $table->string('location')->nullable();
 
             $table->string('event')->nullable();
 
+            $table->text('description');
             $table->string('start_date')->nullable();
             $table->string('end_date')->nullable();
 

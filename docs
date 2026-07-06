@@ -201,6 +201,6 @@ blade
 
 php artisan tinker
 update users:
-$user = App\Models\User::where('email', 'admin@example.com')->first(); 
+$user = App\Models\User::where('email', 'suarezmike129@gmail.com')->first(); 
 $user->role = 'admin'; 
 $user->save();

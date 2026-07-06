@@ -46,8 +46,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     //     return view('admin.dashboard');
     // })
     Route::prefix('admin/portfolio')->group(function(){
-        Route::get('/seminar', [AdminController::class, 'seminar'])->name('seminar.store');
-        Route::get('/work-experience', [AdminController::class, 'workExperience'])->name('work-experience.store');
+        Route::post('/seminar', [AdminController::class, 'seminarStore'])->name('seminar.store');
+        Route::delete('/seminar/{id}', [AdminController::class, 'seminarDestroy'])->name('seminar.delete');
+        Route::post('/work-experience', [AdminController::class, 'workExperienceStore'])->name('work-experience.store');
         Route::get('/school-experience', [AdminController::class, 'schoolExperience'])->name('school-experience.store');
         Route::get('/skill', [AdminController::class, 'skill'])->name('skill.store');
        
@@ -59,9 +60,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::prefix('profile')->group(function(){ 
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
  
     Route::prefix('financial')->group(function () { 
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('financial.dashboard');
