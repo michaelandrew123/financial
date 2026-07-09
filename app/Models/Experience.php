@@ -24,12 +24,7 @@ class Experience extends Model
         'start_date' => 'date',
         'end_date' => 'date',
         'still_in_role' => 'boolean', 
-    ];
-    public function details()
-    {
-        return $this->hasMany(ExperienceDetail::class);
-    }
-    
+    ]; 
   
     public function user(): BelongsTo
     {

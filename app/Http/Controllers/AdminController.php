@@ -7,6 +7,7 @@ use Illuminate\View\View;
 use App\Services\PortfolioService;
 use App\Models\Seminar;
 use App\Models\Experience;
+use App\Models\SkillCategory;
 class AdminController extends Controller
 {
     public function index(): View
@@ -15,9 +16,12 @@ class AdminController extends Controller
         // }
         $user = auth()->user();
         $seminars = $user->seminar()->latest()->orderByDesc('created_at')->paginate(10); 
-      
+        
+        $skillCategories = SkillCategory::latest()->get();
+        
         return view('admin.dashboard', [
-            'seminars'=>$seminars 
+            'seminars'=>$seminars,
+            'skillCategories' => $skillCategories
         ]);
  
     }
@@ -62,4 +66,42 @@ class AdminController extends Controller
 
     }
 
+    public function schoolExperienceStore(Request $request){
+        $validated = $request->validate([ 
+            'company' => 'required|string|max:255',
+            'department' => 'required|string|max:255', 
+            'location' => 'required|string|max:255',
+            'event' => 'required|string|max:255',
+            'start_date' => 'required|date', 
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'description' => 'nullable|string',
+        ]);
+ 
+
+        auth()->user()->schoolExperience()->create($validated);
+        return redirect()->back()->with('success', 'School Experience added successfully!');
+    }
+
+
+    public function skillCategory(Request $request){
+
+        $validated = $request->validate([ 
+            'name' => 'required|string|max:255'
+        ]); 
+
+        auth()->user()->schoolExperience()->create($validated);
+        return redirect()->back()->with('success', 'School Experience added successfully!');
+    }
+
+
+    public function skill(Request $request){
+
+        $validated = $request->validate([ 
+            'company_id'     => ['required', 'exists:companies,id'],
+            'name' => 'required|string|max:255'
+        ]); 
+
+        auth()->user()->skill()->create($validated);
+        return redirect()->back()->with('success', 'School Experience added successfully!');
+    }
 }

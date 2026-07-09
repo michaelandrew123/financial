@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SchoolExperience extends Model
 {
@@ -14,12 +15,18 @@ class SchoolExperience extends Model
         'department',
         'location',
         'event',
+        'description',
         'start_date',
         'end_date',
     ];
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date' 
+    ];
 
-    public function details()
+    public function user(): BelongsTo
     {
-        return $this->hasMany(SchoolExperienceDetail::class);
+        return $this->belongsTo(User::class, 'id');
     }
+ 
 }

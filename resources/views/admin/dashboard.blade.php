@@ -146,6 +146,39 @@
                     </p>
                 </button>
 
+
+                
+                <!-- Skills -->
+                <button
+                    @click="tab = 'skillCategory'"
+                    :class="tab === 'skillCategory' ? 'ring-2 ring-yellow-500' : ''"
+                    class="bg-white rounded-lg shadow hover:shadow-lg transition duration-200 p-6 border border-gray-100 text-left">
+
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-yellow-600">
+                            Skill Category
+                        </h3>
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-8 w-8 text-yellow-600"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+
+                    <p class="mt-3 text-sm text-gray-500">
+                        Manage technical skills, tools, and competencies.
+                    </p>
+                </button>
+
+
+
+
                 <!-- Skills -->
                 <button
                     @click="tab = 'skill'"
@@ -173,6 +206,8 @@
                         Manage technical skills, tools, and competencies.
                     </p>
                 </button>
+
+
 
             </div>
 
@@ -304,6 +339,31 @@
 
                 </div>
 
+
+                <!-- Skills Panel -->
+                <div x-show="tab === 'skillCategory'" x-transition
+                    class="bg-white rounded-lg shadow p-6">
+
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-yellow-600">
+                            Skill Category Management
+                        </h3>
+
+                        <button
+                            @click="showModal=true; modalType='skillCategory'"
+                            class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700">
+                            Add Skill
+                        </button>
+                    </div>
+
+                    <div class="text-gray-500">
+                        Skills and competencies will be displayed here.
+                    </div>
+
+                </div>
+
+
+
             </div>
 
         </div>
@@ -346,12 +406,16 @@
                                 Add School Experience
                             </span>
 
+
+                            <span x-show="modalType === 'skillCategory'">
+                                Add Category Skill
+                            </span>
                             <span x-show="modalType === 'skill'">
                                 Add Skill
                             </span>
 
                         </h3>
-
+                        
                         <button
                             @click="showModal = false"
                             class="text-gray-500 text-xl">
@@ -491,19 +555,75 @@
                         @csrf
 
                         <div class="p-6 space-y-4">
+                             
+ 
+                            <div class="mb-3">
+                                <x-input-label value="Company Name" />
+                                <x-text-input 
+                                    type="text" 
+                                    name="Company Name" 
+                                    class="w-full" 
+                                    required 
+                                    autofocus />
+                            </div>
+                            <div class="mb-3">
+                                <x-input-label value="Department" />
+                                <x-text-input 
+                                    type="text" 
+                                    name="Department" 
+                                    class="w-full" 
+                                    required 
+                                    autofocus />
+                            </div> 
+                            
+                            <div class="mb-3">
+                                <x-input-label value="Location" />
+                                <x-text-input 
+                                    type="text" 
+                                    name="location" 
+                                    class="w-full" 
+                                    required 
+                                    autofocus />
+                            </div> 
+ 
+                            <div class="mb-3">
+                                <x-input-label value="Event" />
+                                <x-text-input 
+                                    type="text" 
+                                    name="event" 
+                                    class="w-full" 
+                                    required 
+                                    autofocus />
+                            </div>  
 
-                            <input
-                                type="text"
-                                name="school_name"
-                                placeholder="School Name"
-                                class="w-full rounded border-gray-300">
-
-                            <input
-                                type="text"
-                                name="course"
-                                placeholder="Course"
-                                class="w-full rounded border-gray-300">
-
+                            <div class="mb-3">
+                                <x-input-label value="Start Date" />
+                                <x-text-input 
+                                    type="date" 
+                                    name="start_date" 
+                                    class="w-full" 
+                                    required 
+                                    autofocus />
+                            </div>  
+                            <div class="mb-3">
+                                <x-input-label value="End Date" />
+                                <x-text-input 
+                                    type="date" 
+                                    name="end_date" 
+                                    class="w-full" 
+                                    required 
+                                    autofocus />
+                            </div>   
+                            <div class="mb-3">
+                                <x-input-label for="description" value="Description" />
+                                <x-textarea
+                                    id="description"
+                                    name="description"
+                                    rows="4"
+                                    class="w-full"
+                                    placeholder="Enter description..."
+                                /> 
+                            </div>
                         </div>
 
                         <div class="border-t p-6 text-right">
@@ -514,6 +634,39 @@
                         </div>
 
                     </form>
+
+
+
+
+                    
+                    <!-- SKILL CATEGORY FORM -->
+                    <form
+                        x-show="modalType === 'skillCategory'"
+                        action="{{ route('skill-category.store') }}"
+                        method="POST">
+
+                        @csrf 
+                        <div class="p-6 space-y-4">
+                            <div class="mb-3">
+                                <x-input-label value="Skill Name" />
+                                <x-text-input 
+                                    type="text" 
+                                    name="name" 
+                                    class="w-full" 
+                                    required 
+                                    autofocus />
+                            </div>     
+                        </div> 
+                        <div class="border-t p-6 text-right">
+                            <button
+                                class="bg-yellow-600 text-white px-4 py-2 rounded">
+                                Save Category Skill
+                            </button>
+                        </div>
+
+                    </form>
+
+
 
                     <!-- SKILL FORM -->
                     <form
@@ -541,7 +694,29 @@
                                 <option>Expert</option>
 
                             </select>
+                                <div class="mb-3">
+                                <x-input-label for="skill_category_id" value="Parent Category" />
+                                <select
+                                    id="skill_category_id"
+                                    name="skill_category_id"
+                                    class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                                    required
+                                >
+                                    <option value="">Select a category</option>
 
+                                    @foreach ($skillCategories as $category)
+                                        <option
+                                            value="{{ $category->id }}"
+                                            {{ old('skill_category_id') == $category->id ? 'selected' : '' }}
+                                        >
+                                            {{ $category->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+          
+
+                                <x-input-error :messages="$errors->get('skill_category_id')" class="mt-2" />
+                            </div> 
                         </div>
 
                         <div class="border-t p-6 text-right">
@@ -552,6 +727,11 @@
                         </div>
 
                     </form>
+
+
+                    
+
+
                 </div>
 
             </div>

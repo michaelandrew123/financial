@@ -49,10 +49,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::post('/seminar', [AdminController::class, 'seminarStore'])->name('seminar.store');
         Route::delete('/seminar/{id}', [AdminController::class, 'seminarDestroy'])->name('seminar.delete');
         Route::post('/work-experience', [AdminController::class, 'workExperienceStore'])->name('work-experience.store');
-        Route::get('/school-experience', [AdminController::class, 'schoolExperience'])->name('school-experience.store');
-        Route::get('/skill', [AdminController::class, 'skill'])->name('skill.store');
-       
+        Route::post('/school-experience', [AdminController::class, 'schoolExperienceStore'])->name('school-experience.store');
+        Route::post('/skill-category', [AdminController::class, 'skillCategory'])->name('skill-category.store');
+        Route::post('/skill', [AdminController::class, 'skill'])->name('skill.store'); 
     });
+    
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin');
     
     Route::get('/admin/users', [UserController::class, 'index']);

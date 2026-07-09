@@ -101,4 +101,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Skill::class, 'user_id');
     }
+    public function skillCategory(): HasMany
+    {
+        return $this->hasMany(SkillCategory::class, 'user_id');
+    }
+    public function schoolExperience(): HasMany
+    {
+        return $this->hasMany(SchoolExperience::class, 'user_id');
+    }
 }

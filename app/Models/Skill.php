@@ -10,13 +10,12 @@ class Skill extends Model
     use HasFactory;
 
     protected $fillable = [
-        'skill_category_id',
         'name',
     ];
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(SkillCategory::class);
+        return $this->belongsTo(SkillCategory::class, 'id');
     } 
     
     public function user(): BelongsTo
