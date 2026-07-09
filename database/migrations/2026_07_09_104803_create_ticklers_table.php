@@ -11,21 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('skills', function (Blueprint $table) {
-            $table->id();
+        Schema::create('ticklers', function (Blueprint $table) {
+            $table->id(); 
             $table->foreignId('user_id')
             ->constrained()
             ->cascadeOnDelete(); 
+
             
-            $table->foreignId('skill_category_id')
-            ->constrained()
-            ->cascadeOnDelete(); 
+            $table->string('title');
+            $table->string('department')->nullable();  
+            $table->text('description');
+            $table->string('start_date')->nullable();
+            $table->string('end_date')->nullable();
 
-            $table->string('name');
-            $table->string('skill_level');
 
-            $table->unsignedTinyInteger('experience_years');
-            $table->unsignedTinyInteger('experience_months');
             $table->timestamps();
         });
     }
@@ -35,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('skills');
+        Schema::dropIfExists('ticklers');
     }
 };

@@ -86,7 +86,6 @@
                         </div>
 
                     </div>
-
  
                     <!-- Expenses + Credits -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -173,8 +172,6 @@
 
                     </div>
 
-
-                    
                     <!-- Savings + Events -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
@@ -267,6 +264,7 @@
 
                         </div>  
                     </div>
+
                     <!-- Recent Transactions -->
                     <div class="bg-white rounded shadow">
 
@@ -358,14 +356,14 @@
 
 
     <div class="flex justify-center mt-16 px-0 sm:items-center sm:justify-between ">
-                    <div class="text-center text-sm sm:text-left">
-                        &nbsp;
-                    </div>
+        <div class="text-center text-sm sm:text-left">
+            &nbsp;
+        </div>
 
-                    <div class="text-center text-sm text-gray-500 dark:text-gray-400 sm:text-right sm:ml-0">
-                        Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
-                    </div>
-                </div>
+        <div class="text-center text-sm text-gray-500 dark:text-gray-400 sm:text-right sm:ml-0">
+            Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
+        </div>
+    </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

@@ -232,6 +232,8 @@
                     </div>
 
                     <div class="overflow-x-auto">
+
+                    @if(isset($seminars) && $seminars->count() > 0)
                         <table class="min-w-full border border-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
@@ -268,7 +270,10 @@
                                 </tr>
                                 @endforeach 
                             </tbody>
-                        </table>
+                        </table>   
+                        @else
+                            Seminar records will be displayed here.
+                        @endif
                     </div>
 
                 </div>
@@ -289,8 +294,51 @@
                         </button>
                     </div>
 
-                    <div class="text-gray-500">
-                        Work experience records will be displayed here.
+                    <div class="text-gray-500 overflow-x-auto">
+                        @if(isset($experiences) && $experiences->count() > 0)
+                            <table class="min-w-full border border-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left">Position</th>
+                                        <th class="px-4 py-3 text-left">company</th>
+                                        <th class="px-4 py-3 text-left">Location</th> 
+                                        <th class="px-4 py-3 text-left">Description</th>
+                                        <th class="px-4 py-3 text-left">Start_date</th>
+                                        <th class="px-4 py-3 text-left">End_date</th>
+                                        <th class="px-4 py-3 text-left">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach($experiences as $experience)
+                                    <tr>
+                                        <td class="px-4 py-3">{{$experience->position}}</td>
+                                        <td class="px-4 py-3">{{$experience->company}}</td>
+                                        <td class="px-4 py-3">{{$experience->location}}</td> 
+                                        <td class="px-4 py-3">{{ \Illuminate\Support\Str::limit($experience->description, 100) }}</td>
+                                        <td class="px-4 py-3">{{$experience->start_date?->format('M d, Y') }}</td>
+                                        <td class="px-4 py-3"> {{ $experience->still_in_role ? 'Present' : $experience->end_date?->format('M d, Y') }}</td> 
+                                        <td class="px-4 py-3">  
+                                            ---
+                                            <!-- <form
+                                                method="POST" 
+                                                action="{{ route('seminar.delete', $seminar->id) }}"
+                                            >
+                                                @csrf
+                                                @method('DELETE') 
+                                                <button
+                                                    type="submit"
+                                                    class="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700" 
+                                                >Delete</button>
+                                            </form>  -->
+                                        </td>
+                                    </tr>
+                                    @endforeach 
+                                </tbody>
+                            </table> 
+                        @else
+                            Work experience records will be displayed here.
+                        @endif
                     </div>
 
                 </div>
@@ -311,8 +359,55 @@
                         </button>
                     </div>
 
-                    <div class="text-gray-500">
-                        Educational records will be displayed here.
+                    <div class="text-gray-500 overflow-x-auto">
+                        @if(isset($schoolExperiences) && $schoolExperiences->count() > 0)
+                            <table class="min-w-full border border-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left">Company</th>
+                                        <th class="px-4 py-3 text-left">Department</th>
+                                        <th class="px-4 py-3 text-left">Location</th>
+                                        <th class="px-4 py-3 text-left">Event</th>
+                                        <th class="px-4 py-3 text-left">Description</th>
+                                        <th class="px-4 py-3 text-left">Start_date</th>
+                                        <th class="px-4 py-3 text-left">End_date</th>
+                                        <th class="px-4 py-3 text-left">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach($schoolExperiences as $schoolExperience)
+                                    <tr>
+                                        <td class="px-4 py-3">{{$schoolExperience->company}}</td>
+                                        <td class="px-4 py-3">{{$schoolExperience->department}}</td>
+                                        <td class="px-4 py-3">{{$schoolExperience->location}}</td>
+                                        <td class="px-4 py-3">{{$schoolExperience->event}}</td>
+                                        <td class="px-4 py-3">{{ \Illuminate\Support\Str::limit($schoolExperience->description, 100) }}</td>
+                                        <td class="px-4 py-3">{{$schoolExperience->start_date?->format('M d, Y') }}</td>
+                                        <td class="px-4 py-3">{{$schoolExperience->end_date?->format('M d, Y') }}</td> 
+                                        <td class="px-4 py-3">  
+                                            ---
+                                            <!-- <form
+                                                method="POST" 
+                                                action="{{ route('seminar.delete', $seminar->id) }}"
+                                            >
+                                                @csrf
+                                                @method('DELETE') 
+                                                <button
+                                                    type="submit"
+                                                    class="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700" 
+                                                >Delete</button>
+                                            </form>  -->
+                                        </td>
+                                    </tr>
+                                    @endforeach 
+                                </tbody>
+                            </table> 
+                        @else
+                            Educational records will be displayed here.
+                        @endif
+
+                        
                     </div>
 
                 </div>
@@ -333,14 +428,55 @@
                         </button>
                     </div>
 
-                    <div class="text-gray-500">
-                        Skills and competencies will be displayed here.
+                    <div class="text-gray-500 overflow-x-auto"> 
+                        @if(isset($skills) && $skills->count() > 0)
+                            <table class="min-w-full border border-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left">Name</th>
+                                        <th class="px-4 py-3 text-left">Skill Level</th>
+                                        <th class="px-4 py-3 text-left">Experience Years</th>
+                                        <th class="px-4 py-3 text-left">Experience Months</th> 
+                                        <th class="px-4 py-3 text-left">Category</th> 
+                                        <th class="px-4 py-3 text-left">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach($skills as $skill)
+                                    <tr>
+                                        <td class="px-4 py-3">{{$skill->name}}</td>
+                                        <td class="px-4 py-3">{{$skill->skill_level}}</td>
+                                        <td class="px-4 py-3">{{$skill->experience_years}}</td>
+                                        <td class="px-4 py-3">{{$skill->experience_months}}</td> 
+                                        <td class="px-4 py-3">{{$skill->skillCategory?->name}}</td> 
+                                        <td class="px-4 py-3">  
+                                            ---
+                                            <!-- <form
+                                                method="POST" 
+                                                action="{{ route('seminar.delete', $seminar->id) }}"
+                                            >
+                                                @csrf
+                                                @method('DELETE') 
+                                                <button
+                                                    type="submit"
+                                                    class="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700" 
+                                                >Delete</button>
+                                            </form>  -->
+                                        </td>
+                                    </tr>
+                                    @endforeach 
+                                </tbody>
+                            </table> 
+                        @else
+                            Skills and competencies will be displayed here.
+                        @endif
                     </div>
 
                 </div>
 
 
-                <!-- Skills Panel -->
+                <!-- Skills Category Panel -->
                 <div x-show="tab === 'skillCategory'" x-transition
                     class="bg-white rounded-lg shadow p-6">
 
@@ -356,8 +492,43 @@
                         </button>
                     </div>
 
-                    <div class="text-gray-500">
-                        Skills and competencies will be displayed here.
+                    <div class="text-gray-500 overflow-x-auto">
+
+
+                        @if(isset($skillCategories) && $skillCategories->count() > 0)
+                            <table class="min-w-full border border-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left">Name</th> 
+                                        <th class="px-4 py-3 text-left">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach($skillCategories as $skillCategory)
+                                    <tr>
+                                        <td class="px-4 py-3">{{$skillCategory->name}}</td> 
+                                        <td class="px-4 py-3">  
+                                            ----
+                                            <!-- <form
+                                                method="POST" 
+                                                action="{{ route('seminar.delete', $seminar->id) }}"
+                                            >
+                                                @csrf
+                                                @method('DELETE') 
+                                                <button
+                                                    type="submit"
+                                                    class="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700" 
+                                                >Delete</button>
+                                            </form>  -->
+                                        </td>
+                                    </tr>
+                                    @endforeach 
+                                </tbody>
+                            </table> 
+                        @else
+                            Skills Category will be displayed here.
+                        @endif 
                     </div>
 
                 </div>
@@ -677,24 +848,28 @@
                         @csrf
 
                         <div class="p-6 space-y-4">
+                            <div class="mb-3">
 
-                            <input
-                                type="text"
-                                name="skill_name"
-                                placeholder="Skill Name"
-                                class="w-full rounded border-gray-300">
-
-                            <select
-                                name="skill_level"
-                                class="w-full rounded border-gray-300">
-
-                                <option>Beginner</option>
-                                <option>Intermediate</option>
-                                <option>Advanced</option>
-                                <option>Expert</option>
-
-                            </select>
-                                <div class="mb-3">
+                                <x-input-label value="Skill Name" />
+                                <x-text-input 
+                                    type="text"
+                                    name="name" 
+                                    class="w-full"  
+                                    required 
+                                    autofocus /> 
+ 
+                            </div> 
+                            
+                            <div class="mb-3">
+                                <select name="skill_level" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full" required>
+                                    <option value="">Select Level</option>
+                                    <option value="Beginner">Beginner</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Advanced">Advanced</option>
+                                    <option value="Expert">Expert</option>
+                                </select> 
+                            </div> 
+                            <div class="mb-3">
                                 <x-input-label for="skill_category_id" value="Parent Category" />
                                 <select
                                     id="skill_category_id"
@@ -717,6 +892,26 @@
 
                                 <x-input-error :messages="$errors->get('skill_category_id')" class="mt-2" />
                             </div> 
+                            <div class="mb-3">
+                                <x-input-label value="Experience Years" />
+                                <x-text-input 
+                                    type="number"
+                                    name="experience_years" 
+                                    class="w-full" 
+                                    min="0"
+                                    required 
+                                    autofocus />
+                            </div>   
+                            <div class="mb-3">
+                                <x-input-label value="Experience Months" />
+                                <x-text-input 
+                                    type="number"
+                                    name="experience_months" 
+                                    min="0" max="11"
+                                    class="w-full" 
+                                    required 
+                                    autofocus />
+                            </div>    
                         </div>
 
                         <div class="border-t p-6 text-right">

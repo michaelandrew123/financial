@@ -97,7 +97,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Experience::class, 'user_id');
     }
-    public function skill(): HasMany
+    public function skills(): HasMany
     {
         return $this->hasMany(Skill::class, 'user_id');
     }

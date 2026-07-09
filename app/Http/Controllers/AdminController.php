@@ -8,21 +8,31 @@ use App\Services\PortfolioService;
 use App\Models\Seminar;
 use App\Models\Experience;
 use App\Models\SkillCategory;
+use Illuminate\Validation\Rule;
 class AdminController extends Controller
 {
     public function index(): View
     {
         // if (auth()->user()->isAdmin()) { 
         // }
+
         $user = auth()->user();
-        $seminars = $user->seminar()->latest()->orderByDesc('created_at')->paginate(10); 
-        
-        $skillCategories = SkillCategory::latest()->get();
-        
-        return view('admin.dashboard', [
-            'seminars'=>$seminars,
-            'skillCategories' => $skillCategories
-        ]);
+
+        $data = [
+            'seminars' => 'seminar',
+            'experiences' => 'experience',
+            'skills' => 'skills',
+            'skillCategories' => 'skillCategory',
+            'schoolExperiences' => 'schoolExperience',
+        ];
+    
+        foreach ($data as $key => $relation) {
+            $data[$key] = $user->$relation()->latest()->paginate(10);
+        }
+    
+        $data['skillCategoriesList'] = SkillCategory::latest()->get();
+    
+        return view('admin.dashboard', $data);
  
     }
 
@@ -89,19 +99,42 @@ class AdminController extends Controller
             'name' => 'required|string|max:255'
         ]); 
 
-        auth()->user()->schoolExperience()->create($validated);
-        return redirect()->back()->with('success', 'School Experience added successfully!');
+        auth()->user()->skillCategory()->create($validated);
+        return redirect()->back()->with('success', 'Skill Category added successfully!');
     }
 
 
     public function skill(Request $request){
 
-        $validated = $request->validate([ 
-            'company_id'     => ['required', 'exists:companies,id'],
-            'name' => 'required|string|max:255'
-        ]); 
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+    
+            'skill_category_id' => [
+                'required',
+                Rule::exists('skill_categories', 'id')
+                    ->where('user_id', auth()->id()),
+            ],
+    
+            'skill_level' => [
+                'required',
+                Rule::in(['Beginner', 'Intermediate', 'Advanced', 'Expert']),
+            ],
+    
+            'experience_years' => [
+                'required',
+                'integer',
+                'min:0',
+            ],
+    
+            'experience_months' => [
+                'required',
+                'integer',
+                'min:0',
+                'max:11',
+            ],
+        ]);
 
-        auth()->user()->skill()->create($validated);
-        return redirect()->back()->with('success', 'School Experience added successfully!');
+        auth()->user()->skills()->create($validated);
+        return redirect()->back()->with('success', 'Skill added successfully!');
     }
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\AdminController; 
 use App\Http\Controllers\CompanySalaryController; 
+use App\Http\Controllers\TicklerController;  
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,7 +25,42 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+
+    $quotes = [
+        [
+            'quote' => 'Success is the sum of small efforts, repeated day in and day out.',
+            'author' => 'Robert Collier',
+        ],
+        [
+            'quote' => 'The future depends on what you do today.',
+            'author' => 'Mahatma Gandhi',
+        ],
+        [
+            'quote' => 'Opportunities don’t happen. You create them.',
+            'author' => 'Chris Grosser',
+        ],
+        [
+            'quote' => 'Dream big and dare to fail.',
+            'author' => 'Norman Vaughan',
+        ],
+        [
+            'quote' => 'The only way to do great work is to love what you do.',
+            'author' => 'Steve Jobs',
+        ],
+        [
+            'quote' => 'Quality means doing it right when no one is looking.',
+            'author' => 'Henry Ford',
+        ],
+        [
+            'quote' => 'Believe you can and you’re halfway there.',
+            'author' => 'Theodore Roosevelt',
+        ],
+    ];
+    
+    $dailyQuote = collect($quotes)->random();
+    
+    return view('welcome', compact('dailyQuote'));
+     
 })->name('/');
 
 Route::get('/dashboard', function () {
@@ -92,6 +128,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/events', [EventController::class, 'index'])->name('events.index');
         Route::post('/events', [EventController::class, 'store'])->name('events.store');
     });
+
+    Route::prefix('tickler')->group(function(){
+        Route::get('/', [TicklerController::class, 'index'])->name('tickler.index');
+    });
+
 
 });
 

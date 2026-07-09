@@ -18,6 +18,7 @@ return new class extends Migration
             ->constrained()
             ->cascadeOnDelete(); 
             $table->string('name', 150);
+            $table->string('position');
             $table->text('address')->nullable();
             $table->string('email', 150)->nullable(); 
             $table->decimal('gross_salary', 12, 2); 

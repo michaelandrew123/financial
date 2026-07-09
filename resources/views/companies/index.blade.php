@@ -63,7 +63,12 @@
                         <div class="bg-white rounded-lg shadow border border-gray-200 p-5">
                             <div class="mb-4 flex flex-row justify-between">
                                 
+                                <h3 class="text-lg font-semibold text-gray-800">
+                                    {{ $company->position }}
+                                </h3>
+
                                 <div class="">
+                                
                                     <h3 class="text-lg font-semibold text-gray-800">
                                         {{ $company->name }}
                                     </h3>
@@ -137,6 +142,7 @@
                                             editCompany = {
                                                 id: {{ $company->id }},
                                                 name: @js($company->name),
+                                                position: @js($company->position),
                                                 address: @js($company->address),
                                                 email: @js($company->email),
                                                 gross_salary: '{{ $company->gross_salary }}',
@@ -416,6 +422,8 @@
                 <form method="POST" action="{{ route('company.salary.store') }}">
                     @csrf   
                     <input type="hidden" name="company_id" :value="selectedCompany.id">
+
+
                     <div class="mb-3">
                         <x-input-label for="gross_salary" value="How much salary you received today?" />
                         <x-text-input
@@ -427,7 +435,6 @@
                             required
                         />
                     </div>
-
                     <!-- frequency -->
                     <div class="mb-3">
                         <x-input-label for="frequency" value="Pay Frequency" />
@@ -477,6 +484,16 @@
 
                 <form method="POST" action="{{ route('companies.store') }}">
                     @csrf 
+ 
+                    <div class="mb-3">
+                        <x-input-label for="position" value="Position" />
+                        <x-text-input
+                            id="position"
+                            name="position"
+                            class="w-full"
+                            required
+                        />
+                    </div>
                     <!-- Company Name -->
                     <div class="mb-3">
                         <x-input-label for="name" value="Company Name" />
@@ -589,19 +606,31 @@
                     @method('PUT')
 
                     <div class="mb-3">
-                        <x-input-label value="Company Name" />
+                        <x-input-label for="name" value="Company Name" />
                         <input
                             type="text"
                             name="name"
+                            id="name"
                             x-model="editCompany.name"
                             class="w-full border-gray-300 rounded-md"
                         >
                     </div>
-
                     <div class="mb-3">
-                        <x-input-label value="Address" />
+                        <x-input-label for="position" value="Position" />
                         <input
                             type="text"
+                            name="position"
+                            id="position"
+                            x-model="editCompany.position"
+                            class="w-full border-gray-300 rounded-md"
+                        >
+                    </div>
+                    
+                    <div class="mb-3">
+                        <x-input-label for="position" value="Address" />
+                        <input
+                            type="text"
+                            name="address"
                             name="address"
                             x-model="editCompany.address"
                             class="w-full border-gray-300 rounded-md"
@@ -609,8 +638,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <x-input-label for="email" value="Email" />
-            
+                        <x-input-label for="email" value="Email" /> 
                         <x-text-input
                             id="email"
                             name="email"
@@ -691,11 +719,6 @@
 
                 </form>
             </div>
-        </div>
-
-
-
-    </div>
-
-
+        </div> 
+    </div> 
 </x-app-layout>

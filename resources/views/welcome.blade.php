@@ -32,13 +32,24 @@
             @endif
 
             <div class="max-w-7xl mx-auto p-6 lg:p-8">
-                <div class="flex justify-center">
-                    <x-logo />
+                <!-- <div class="flex justify-center"> 
+                </div> -->
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-lg p-6 text-white">
+
+                    <h2 class="text-xl font-bold mb-4">
+                        💡 Quote of the Day
+                    </h2>
+
+                    <blockquote class="text-lg italic">
+                        "{{ $dailyQuote['quote'] }}"
+                    </blockquote>
+
+                    <p class="mt-4 text-right font-semibold">
+                        — {{ $dailyQuote['author'] }}
+                    </p>
+
                 </div>
-
-
-
-                
+ 
                 <div class="mt-16 hidden" style="display:none">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
                         <a href="https://laravel.com/docs" class="scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500">
@@ -118,12 +129,7 @@
                         </div>
                     </div>
                 </div>
-
-
-
-
-
-
+ 
                 <div class="flex justify-center mt-16 px-0 sm:items-center sm:justify-between " style="display:none">
                     <div class="text-center text-sm sm:text-left">
                         &nbsp;

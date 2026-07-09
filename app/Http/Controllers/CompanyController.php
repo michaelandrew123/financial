@@ -108,6 +108,7 @@ class CompanyController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'position' => ['required', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'gross_salary' => ['required', 'numeric', 'min:0'],
@@ -146,6 +147,7 @@ class CompanyController extends Controller
     { 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'position' => ['required', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'gross_salary' => ['required', 'numeric', 'min:0'],
