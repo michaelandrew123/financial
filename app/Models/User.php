@@ -109,4 +109,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(SchoolExperience::class, 'user_id');
     }
+
+    //tickler
+
+    
+    public function tickler(): HasMany
+    {
+        return $this->hasMany(Tickler::class, 'user_id');
+    }  
+ 
+    public function tickler_companies(): HasMany
+    {
+        return $this->hasMany(TicklerCompany::class, 'user_id');
+    } 
+
+    public function tickler_templates(): HasMany
+    {
+        return $this->hasMany(TicklerTemplate::class, 'user_id');
+    }
+     
 }
+     

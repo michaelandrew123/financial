@@ -10,7 +10,11 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\AdminController; 
 use App\Http\Controllers\CompanySalaryController; 
-use App\Http\Controllers\TicklerController;  
+use App\Http\Controllers\TicklerController;   
+use App\Http\Controllers\TicklerCompanyController;   
+use App\Http\Controllers\TicklerTemplateController;   
+
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -92,7 +96,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin');
     
-    Route::get('/admin/users', [UserController::class, 'index']);
+    // Route::get('/admin/users', [UserController::class, 'index']);
 });
 
 
@@ -127,13 +131,16 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/events', [EventController::class, 'index'])->name('events.index');
         Route::post('/events', [EventController::class, 'store'])->name('events.store');
-    });
+    }); 
 
-    Route::prefix('tickler')->group(function(){
-        Route::get('/', [TicklerController::class, 'index'])->name('tickler.index');
-    });
+    // Route::prefix('tickler')->group(function(){
+    //     Route::get('/', [TicklerController::class, 'index'])->name('tickler.index');
+    //     Route::get('/create', [TicklerController::class, 'create'])->name('tickler.create');
+    // });
 
-
+    Route::resource('tickler', TicklerController::class);
+    Route::resource('tickler-company', TicklerCompanyController::class);
+    Route::resource('tickler-template', TicklerTemplateController::class);
 });
 
 require __DIR__.'/auth.php';

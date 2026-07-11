@@ -11,20 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ticklers', function (Blueprint $table) {
+        Schema::create('tickler_templates', function (Blueprint $table) {
             $table->id();
-
+            
             $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete();
         
-            $table->string('company');
-            $table->string('department')->nullable();
-            $table->text('description')->nullable();
-            $table->text('address')->nullable();
-         
-            $table->string('position');
-        
+            $table->string('item');
+            $table->unsignedInteger('sort')->default(0);
+            $table->string('name')->nullable();
+
+            
             $table->timestamps();
         });
     }
@@ -34,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ticklers');
+        Schema::dropIfExists('tickler_templates');
     }
 };

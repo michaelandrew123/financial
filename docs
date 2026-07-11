@@ -204,3 +204,8 @@ update users:
 $user = App\Models\User::where('email', 'suarezmike129@gmail.com')->first(); 
 $user->role = 'admin'; 
 $user->save();
+
+
+php artisan make:model TicklerCompany -mc
+php artisan make:model TicklerTemplate -mc
+php artisan make:model TicklerItem -mc

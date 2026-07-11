@@ -11,20 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ticklers', function (Blueprint $table) {
+        Schema::create('tickler_companies', function (Blueprint $table) {
             $table->id();
 
+            
             $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete();
-        
-            $table->string('company');
-            $table->string('department')->nullable();
-            $table->text('description')->nullable();
-            $table->text('address')->nullable();
-         
+
+                
             $table->string('position');
+            $table->string('name');
+            $table->text('address')->nullable();
         
+            $table->decimal('salary', 12, 2)->default(0);
+        
+            $table->enum('frequency', [
+                'weekly',
+                'biweekly',
+                'monthly'
+            ])->default('biweekly');
+
+
             $table->timestamps();
         });
     }
@@ -34,6 +42,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ticklers');
+        Schema::dropIfExists('tickler_companies');
     }
 };
