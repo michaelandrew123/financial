@@ -28,7 +28,7 @@ class Tickler extends Model
         return $this->belongsTo(User::class, 'id');
     }
          
-    public function tickler_item(): HasMany
+    public function items(): HasMany
     {
         return $this->hasMany(TicklerItem::class, 'tickler_id');
     } 

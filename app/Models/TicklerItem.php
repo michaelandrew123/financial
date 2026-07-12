@@ -12,15 +12,16 @@ class TicklerItem extends Model
  
     protected $fillable = [
         'tickler_id',
-        'sort',
-        'item',
-        'name',
+        'items',
         'approved_by_name',
         'approved_by_signature',
-        'signature' 
+        'signature',
     ];
     
-    protected $casts = [];
+    protected $casts = [
+        'items' => 'array',
+        'created_at' => 'date'
+    ];
     
     public function tickler() : BelongsTo {
         return $this->belongsTo(Tickler::class);

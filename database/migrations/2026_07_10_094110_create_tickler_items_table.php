@@ -17,11 +17,9 @@ return new class extends Migration
             $table->foreignId('tickler_id')
                 ->constrained()
                 ->cascadeOnDelete();
+         
         
-            $table->unsignedInteger('sort')->default(0);
-        
-            $table->string('item');
-            $table->string('name')->nullable(); 
+            $table->json('items');
             $table->string('approved_by_name')->nullable(); 
             $table->string('approved_by_signature')->nullable(); 
             $table->string('signature')->nullable(); 

@@ -3,38 +3,30 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\TicklerTemplate;
 
 class TicklerTemplateController extends Controller
 {
     /**
      * Display a listing of the resource.
      */ 
-    public function index(): View
+    public function index(TicklerTemplate $ticklerTemplate)
     {
        
+        $items = auth()->user()->tickler_templates()->orderBy('created_at')->get();
+     
+        return view('tickler.template.index', compact('items'));
     }
 
-
-    // public function index(): View
-    // {
-    //     $x = auth()->user(); 
-    //     return view('companies.index', [
-    //         'user' => $user,
-    //         'companies' => $user->companies()
-    //             ->with([
-    //                 'salaries' => fn ($query) =>  $query->orderBy('created_at', 'desc') 
-    //             ])
-    //             ->orderBy('created_at', 'desc')
-    //             ->get(), 
-    //     ]);
-    // }
+ 
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(TicklerTemplate $ticklerTemplate)
     {
-        //
+       
+        return view('tickler-template.create', compact('ticklerTemplate'));
     }
 
     /**
@@ -42,7 +34,23 @@ class TicklerTemplateController extends Controller
      */
     public function store(Request $request)
     {
-      
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'items' => 'required|array|min:1',
+            'items.*' => 'required|string|max:255',
+        ]);
+    
+    
+        TicklerTemplate::create([
+            'user_id' => auth()->id(),
+            'title' => $validated['title'],
+            'items' => $validated['items'],
+        ]);
+    
+    
+        return redirect()
+            ->route('tickler-template.index')
+            ->with('success','Template created successfully.');
     }
 
     /**
@@ -65,17 +73,39 @@ class TicklerTemplateController extends Controller
      * Update the specified resource in storage.
      */
   
-    public function update(Request $request, Company $company)
-    { 
- 
+    public function update(Request $request, TicklerTemplate $ticklerTemplate)
+    {
+    
+        $validated = $request->validate([
+            'title' => 'nullable|string|max:255',
+            'items' => 'required|array|min:1',
+            'items.*' => 'required|string|max:255',
+        ]);
+    
+    
+        $ticklerTemplate->update([
+            'title' => $validated['title'],
+            'items' => $validated['items'],
+        ]);
+    
+    
+        return redirect()
+            ->route('tickler-template.index')
+            ->with('success','Template updated successfully.');
+    
     }
 
     
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(TicklerTemplate $ticklerTemplate)
     {
-        //
+        $ticklerTemplate->delete();
+    
+    
+        return redirect()
+            ->route('tickler-template.index')
+            ->with('success','Template deleted successfully.');
     }
 }

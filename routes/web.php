@@ -12,8 +12,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CompanySalaryController; 
 use App\Http\Controllers\TicklerController;   
 use App\Http\Controllers\TicklerCompanyController;   
-use App\Http\Controllers\TicklerTemplateController;   
-
+use App\Http\Controllers\TicklerTemplateController;
+use App\Http\Controllers\TicklerItemController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -141,6 +141,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('tickler', TicklerController::class);
     Route::resource('tickler-company', TicklerCompanyController::class);
     Route::resource('tickler-template', TicklerTemplateController::class);
+    Route::resource('tickler-items', TicklerItemController::class); 
+    
 });
 
 require __DIR__.'/auth.php';

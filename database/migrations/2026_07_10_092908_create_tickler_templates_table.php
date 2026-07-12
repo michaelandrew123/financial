@@ -18,9 +18,8 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
         
-            $table->string('item');
-            $table->unsignedInteger('sort')->default(0);
-            $table->string('name')->nullable();
+            $table->json('items'); 
+            $table->string('title')->nullable();
 
             
             $table->timestamps();

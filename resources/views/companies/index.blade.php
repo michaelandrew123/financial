@@ -210,7 +210,7 @@
             @click.self="openViewTransaction = false"
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
             x-cloak
-        >
+            >
             <div class="bg-white rounded-lg shadow-lg w-full max-w-5xl">
 
                 <div class="flex justify-between items-center border-b px-6 py-4">
@@ -361,7 +361,7 @@
                                                     x-text="transaction.is_current ? 'Unset Current' : 'Set Current'"
                                                 ></button>
                                             </form> 
-<!-- 
+                                        <!-- 
                                         <template x-if="transaction.is_current"> 
                                                 <form
                                                     method="POST"

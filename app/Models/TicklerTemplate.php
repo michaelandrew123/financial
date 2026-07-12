@@ -12,16 +12,20 @@ class TicklerTemplate extends Model
 
     protected $fillable = [
         'user_id',
-        'name',
-        'item',
-        'sort'
+        'title',
+        'items',
     ];
 
-    protected $casts = [];
-    
+
+    protected $casts = [
+        'items' => 'array',
+        'created_at' => 'date',
+    ];
+
+
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'id');
+        return $this->belongsTo(User::class);
     }
 
 }
