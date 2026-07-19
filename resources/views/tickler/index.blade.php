@@ -65,7 +65,7 @@
                     </h1>
                 </div>
 
-                <div class="bg-white rounded-lg shadow p-6">
+                <div class="bg-white rounded-lg shadow p-6 hidden">
                     <p class="text-gray-500 text-sm">
                         Companies
                     </p>
@@ -99,7 +99,7 @@
                     </a>
 
                     <a href="{{ route('tickler-company.index') }}"
-                        class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded">
+                        class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded  hidden">
 
                         Companies
                     </a>
@@ -178,9 +178,41 @@
                                     </span>
                                 </div> 
                             </div>
-
+ 
                             <div class="mt-5 pt-4 border-t flex flex-col gap-2 justify-between"> 
                                 <div class="flex flex-row justify-between gap-2" >  
+                               
+                                    <x-primary-button
+                                        class="w-full justify-center"
+                                        @click="
+                                            selectedTickler = {
+                                                id: {{ $tickler->id }},
+                                                company: {{ Js::from($tickler->company) }},
+                                            }; 
+                                            transactions = {{ Js::from(
+                                                $tickler->items->sortByDesc('created_at')->values()->map(function ($item) {
+                                                    return [
+                                                        'id' => $item->id,
+                                                        'items' => $item->items,
+                                                        'created_at' => $item->created_at->format('F j, Y g:i A'),
+                                                        'approved_by_name' => ucfirst($item->approved_by_name),
+                                                        'approved_by_signature' => $item->approved_by_signature_path
+                                                            ? \Illuminate\Support\Facades\Storage::url($item->approved_by_signature_path)
+                                                            : null,
+
+                                                        'signature' => $item->signature_path
+                                                            ? \Illuminate\Support\Facades\Storage::url($item->signature_path)
+                                                            : null,
+                                                    ];
+                                                })
+                                            ) }};
+ 
+                                            openViewTransaction = true;
+                                        "
+                                    >
+                                        View Item
+                                    </x-primary-button>
+ 
                                     <x-secondary-button
                                         @click="
                                             selectedTickler = {
@@ -188,41 +220,17 @@
                                                 company: {{ Js::from($tickler->company) }},
                                             };
                                             openCreate = true;
-                                        "
+                                            setTimeout(() => {
+                                                window.dispatchEvent(new Event('resize'));
+                                            }, 100);" 
                                         class="w-full justify-center" 
                                     >
-                                        Add Tickler Item
+                                        Add Item
                                     </x-secondary-button>  
                                     <a  href="{{ route('tickler.edit',$tickler) }}"
                                         class="w-full hidden px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600"> 
                                         Edit 
                                     </a> 
-                                    <x-primary-button
-                                        class="w-full justify-center"
-                                        @click="
-                                            selectedTickler = {
-                                                id: {{ $tickler->id }},
-                                                company: {{ Js::from($tickler->company) }},
-                                            };
-
-                                            transactions = {{ Js::from(
-                                                $tickler->items->map(function ($item) {
-                                                    return [
-                                                        'id' => $item->id,
-                                                        'items' => $item->items,
-                                                        'created_at' => $item->created_at->format('F j, Y g:i A'),
-                                                        'approved_by_name' => ucfirst($item->approved_by_name),
-                                                        'approved_by_signature' => ucfirst($item->approved_by_signature),
-                                                        'signature' => ucfirst($item->signature)
-                                                    ];
-                                                })
-                                            ) }};
-
-                                            openViewTransaction = true;
-                                        "
-                                    >
-                                        View Item
-                                    </x-primary-button>
 
                                 </div> 
                             </div>
@@ -308,10 +316,35 @@
 
             x-data="{
                 newItem: '',
-                items: []
+                items: [],
+                selectedTemplate: '',
+
+                templates: {{ Js::from($templates) }},
+
+                loadTemplate() {
+
+                    const template = this.templates.find(
+                        t => t.id == this.selectedTemplate
+                    );
+
+                    if (!template) {
+                        this.items = [];
+                        return;
+                    }
+ 
+                    this.items = [...template.items];
+                }
             }"
             >
-            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <div class="      bg-white
+                rounded-xl
+                shadow-xl
+                w-full
+                max-w-5xl
+                mx-4
+                max-h-[90vh]
+                overflow-y-auto
+                p-6">
 
                 <h2 class="text-lg font-semibold mb-4">
                     Add Item Tickler <span x-text="selectedTickler.company"></span>
@@ -326,6 +359,42 @@
                             name="tickler_id"
                             :value="selectedTickler.id"
                         > 
+
+
+                        <div class="mb-6">
+
+                            <label class="block text-sm font-medium mb-1">
+                                Template
+                            </label>
+
+                            <select
+                                x-model="selectedTemplate"
+                                @change="loadTemplate"
+                                class="w-full rounded border-gray-300"
+                            >
+
+                                <option value="">
+                                    -- Select Template --
+                                </option>
+
+                                <template
+                                    x-for="template in templates"
+                                    :key="template.id"
+                                >
+
+                                    <option
+                                        :value="template.id"
+                                        x-text="template.title"
+                                    ></option>
+
+                                </template>
+
+                            </select>
+
+                        </div>
+
+
+
                         <div class="mb-6">
 
                             <label class="block font-medium mb-2">
@@ -426,7 +495,7 @@
                         <!-- ========================= -->
                         <!-- OTHER FIELDS -->
                         <!-- ========================= -->
-
+ 
                         <div class="space-y-4">
 
                             <div>
@@ -437,7 +506,9 @@
                                 <input
                                     type="text"
                                     name="name"
-                                    class="w-full rounded border-gray-300"
+                                    disabled
+                                    value="{{ auth()->user()?->first_name ?? '' }} {{ auth()->user()?->last_name ?? '' }} {{ auth()->user()?->suffix ? ' ' . auth()->user()->suffix . '.' : '' }}" 
+                                    class="w-full rounded border-gray-300 bg-gray-100"
                                 >
                             </div>
 
@@ -452,29 +523,85 @@
                                     class="w-full rounded border-gray-300"
                                 >
                             </div>
+                            <!-- Approved By Signature -->
+                            <div
+                                x-data="signaturePad()"
+                                class="space-y-2"
+                            >
 
-                            <div>
-                                <label class="block text-sm font-medium mb-1">
+                                <label class="block text-sm font-medium">
                                     Approved By Signature
                                 </label>
 
+                                <div class="border rounded-lg bg-white overflow-hidden">
+
+                                    <canvas
+                                        x-ref="canvas"
+                                        class="w-full h-48 touch-none"
+                                    ></canvas>
+
+                                </div>
+
+
                                 <input
-                                    type="text"
+                                    type="hidden"
                                     name="approved_by_signature"
-                                    class="w-full rounded border-gray-300"
+                                    x-model="signature"
                                 >
+
+
+                                <button
+                                    type="button"
+                                    @click="clear()"
+                                    class="px-3 py-2 text-sm rounded border hover:bg-gray-100"
+                                >
+                                    Clear
+                                </button>
+
+
                             </div>
 
-                            <div>
-                                <label class="block text-sm font-medium mb-1">
+
+
+
+                            <!-- Signature -->
+
+                            <div
+                                x-data="signaturePad()"
+                                class="space-y-2"
+                            >
+
+                                <label class="block text-sm font-medium">
                                     Signature
                                 </label>
 
+
+                                <div class="border rounded-lg bg-white overflow-hidden">
+
+                                    <canvas
+                                        x-ref="canvas"
+                                        class="w-full h-48 touch-none"
+                                    ></canvas>
+
+                                </div>
+
+
                                 <input
-                                    type="text"
+                                    type="hidden"
                                     name="signature"
-                                    class="w-full rounded border-gray-300"
+                                    x-model="signature"
                                 >
+
+
+                                <button
+                                    type="button"
+                                    @click="clear()"
+                                    class="px-3 py-2 text-sm rounded border hover:bg-gray-100"
+                                >
+                                    Clear
+                                </button>
+
+
                             </div>
 
                         </div>
@@ -490,7 +617,8 @@
                                 @click="
                                     openCreate=false;
                                     items=[];
-                                    newItem='';
+                                    newItem=''; 
+                                    selectedTemplate = '';
                                 "
                                 class="px-4 py-2 rounded border"
                             >
@@ -625,12 +753,42 @@
                                         <span x-text="transaction.approved_by_name"></span>
                                     </td>
 
-                                    <td class="px-4 py-3">
+                                    <!-- <td class="px-4 py-3">
                                         <span x-text="transaction.approved_by_signature"></span>
-                                    </td>
+                                    </td> -->
+
 
                                     <td class="px-4 py-3">
+                                        <template x-if="transaction.approved_by_signature">
+                                            <img
+                                                :src="transaction.approved_by_signature"
+                                                alt="Approved Signature"
+                                                class="h-16 object-contain"
+                                            >
+                                        </template>
+
+                                        <template x-if="!transaction.approved_by_signature">
+                                            <span class="text-gray-400">No signature</span>
+                                        </template>
+                                    </td>
+
+
+                                    <!-- <td class="px-4 py-3">
                                         <span x-text="transaction.signature"></span>
+                                    </td> -->
+
+                                    <td class="px-4 py-3">
+                                        <template x-if="transaction.signature">
+                                            <img
+                                                :src="transaction.signature"
+                                                alt="Signature"
+                                                class="h-16 object-contain"
+                                            >
+                                        </template>
+
+                                        <template x-if="!transaction.signature">
+                                            <span class="text-gray-400">No signature</span>
+                                        </template>
                                     </td>
                                 </tr>  
                             </template> 
@@ -646,6 +804,191 @@
                 </div> 
             </div>
         </div> 
-    </div> 
+    </div>  
+ 
+<script>
 
+function signaturePad(){
+
+    return {
+
+        canvas: null,
+        ctx: null,
+        drawing: false,
+        signature: '',
+
+
+        init(){
+
+            this.canvas = this.$refs.canvas;
+
+            this.ctx = this.canvas.getContext('2d');
+
+            this.resizeCanvas();
+
+
+            window.addEventListener(
+                'resize',
+                () => this.resizeCanvas()
+            );
+
+
+            this.canvas.addEventListener(
+                'pointerdown',
+                (e) => this.startDrawing(e)
+            );
+
+
+            this.canvas.addEventListener(
+                'pointermove',
+                (e) => this.draw(e)
+            );
+
+
+            this.canvas.addEventListener(
+                'pointerup',
+                () => this.stopDrawing()
+            );
+
+
+            this.canvas.addEventListener(
+                'pointerleave',
+                () => this.stopDrawing()
+            );
+
+        },
+
+
+        resizeCanvas(){
+
+            const ratio = window.devicePixelRatio || 1;
+
+
+            const rect = this.canvas.getBoundingClientRect();
+
+
+            this.canvas.width = rect.width * ratio;
+
+            this.canvas.height = rect.height * ratio;
+
+
+            this.ctx = this.canvas.getContext('2d');
+
+
+            this.ctx.scale(
+                ratio,
+                ratio
+            );
+
+
+            this.ctx.lineWidth = 2;
+
+            this.ctx.lineCap = 'round';
+
+            this.ctx.strokeStyle = '#000';
+
+
+        },
+
+
+        getPosition(e){
+
+            const rect =
+                this.canvas.getBoundingClientRect();
+
+
+            return {
+
+                x: e.clientX - rect.left,
+
+                y: e.clientY - rect.top
+
+            };
+
+        },
+
+
+        startDrawing(e){
+
+            this.drawing = true;
+
+
+            this.canvas.setPointerCapture(
+                e.pointerId
+            );
+
+
+            const pos =
+                this.getPosition(e);
+
+
+            this.ctx.beginPath();
+
+            this.ctx.moveTo(
+                pos.x,
+                pos.y
+            );
+
+        },
+
+
+        draw(e){
+
+            if(!this.drawing)
+                return;
+
+
+            const pos =
+                this.getPosition(e);
+
+
+            this.ctx.lineTo(
+                pos.x,
+                pos.y
+            );
+
+
+            this.ctx.stroke();
+
+
+        },
+
+
+        stopDrawing(){
+
+            if(!this.drawing)
+                return;
+
+
+            this.drawing = false;
+
+
+            this.signature =
+                this.canvas.toDataURL(
+                    'image/png'
+                );
+
+        },
+
+ 
+        clear(){
+
+            this.ctx.clearRect(
+                0,
+                0,
+                this.canvas.width,
+                this.canvas.height
+            );
+
+
+            this.signature = '';
+
+        }
+
+
+    }
+
+}
+
+</script>
 </x-app-layout>

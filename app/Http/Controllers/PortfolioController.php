@@ -23,11 +23,9 @@ class PortfolioController extends Controller
         // if (auth()->user()->isAdmin()) {
            
         // }
-        $data = $this->portfolioService->getPortfolioData($request->user());
+        // $data = $this->portfolioService->getPortfolioData($request->user());
    
-        return view('portfolio.index', [
-            'user' => $data['user']
-        ]);
+        return view('portfolio.portfolio');
  
     }
 

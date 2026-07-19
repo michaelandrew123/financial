@@ -12,17 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tickler_items', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('tickler_id')
-                ->constrained()
-                ->cascadeOnDelete();
-         
-        
+            $table->id(); 
+            $table->foreignId('tickler_id')->constrained()->cascadeOnDelete(); 
             $table->json('items');
-            $table->string('approved_by_name')->nullable(); 
-            $table->string('approved_by_signature')->nullable(); 
-            $table->string('signature')->nullable(); 
+            $table->string('approved_by_name')->nullable();  
+            $table->text('approved_by_signature_path')->nullable(); 
+            $table->text('signature_path')->nullable();
             $table->timestamps();
         });
     }

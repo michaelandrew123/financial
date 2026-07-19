@@ -13,9 +13,9 @@ class TicklerItem extends Model
     protected $fillable = [
         'tickler_id',
         'items',
-        'approved_by_name',
-        'approved_by_signature',
-        'signature',
+        'approved_by_name', 
+        'approved_by_signature_path', 
+        'signature_path',
     ];
     
     protected $casts = [

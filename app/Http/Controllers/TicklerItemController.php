@@ -3,19 +3,30 @@
 namespace App\Http\Controllers;
 use App\Models\Tickler;
 use App\Models\TicklerItem;
+use App\Models\TicklerTemplate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 
 class TicklerItemController extends Controller
 {
     public function index(Tickler $tickler)
     {
-        $items = $tickler->items()->orderBy('created_at')->get();
+        $items = $tickler->items()->orderBy('created_at', 'asc')->get();
+
+        
+        $templates = TicklerTemplate::where('user_id', auth()->id())
+            ->orderBy('title')
+            ->get();
+
 
         return view('tickler-items.index', compact('tickler', 'items'));
     }
 
-    public function create(Tickler $tickler)
+    public function create(Tickler $tickler) 
     {
+ 
         return view('tickler-items.create', compact('tickler'));
     }
 
@@ -45,23 +56,22 @@ class TicklerItemController extends Controller
             'items' => 'required|array|min:1',
             'items.*' => 'required|string|max:255', 
             'approved_by_name' => 'nullable|string|max:255',
-            'approved_by_signature' => 'nullable|string|max:255',
-            'signature' => 'nullable|string|max:255',
-        ]);
+            // 'approved_by_signature' => 'nullable|string|max:255',
+            // 'signature' => 'nullable|string|max:255', 
+            'approved_by_signature'=>'nullable|string', 
+            'signature'=>'nullable|string',
+        ]); 
+        $validated['approved_by_signature_path'] = $this->saveSignature(
+            $request->approved_by_signature
+        );
         
-
-        // $exists = TicklerItem::where('tickler_id', $validated['tickler_id'])
-        // ->whereDate('created_at', Carbon::today())
-        // ->exists();
-
-        // if ($exists) {
-        //     return back()
-        //         ->withInput()
-        //         ->withErrors([
-        //             'tickler_id' => 'A tickler item has already been created for today.'
-        //         ]);
-        // }
- 
+        $validated['signature_path'] = $this->saveSignature(
+            $request->signature
+        );
+        
+        unset($validated['approved_by_signature']);
+        unset($validated['signature']);
+        
         TicklerItem::create($validated);
         
         return redirect()
@@ -69,6 +79,31 @@ class TicklerItemController extends Controller
             ->with('success', 'Tickler item created successfully.'); 
     }
   
+    private function saveSignature(?string $base64)
+    {
+        if (!$base64) {
+            return null;
+        }
+
+        $base64 = preg_replace(
+            '#^data:image/\w+;base64,#i',
+            '',
+            $base64
+        );
+
+        $image = base64_decode($base64);
+
+        $name = 'signatures/'.Str::uuid().'.png';
+
+        Storage::disk('public')->put(
+            $name,
+            $image
+        );
+
+        return $name;
+    }
+
+
     public function show(Tickler $tickler, TicklerItem $item)
     {
         return view('tickler-items.show', compact('tickler', 'item'));

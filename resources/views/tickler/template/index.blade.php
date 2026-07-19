@@ -80,8 +80,7 @@
                                 </div>  
                             </div> 
                             <div class="flex flex-row justify-between">
-                                <x-secondary-button
-                                    
+                                <x-primary-button 
                                     @click="
                                         selectedTemplate = {
                                             id: {{ $item->id }},
@@ -93,7 +92,7 @@
                                     " 
                                 >
                                     View
-                                </x-secondary-button>
+                                </x-primary-button>
 
                            
                                 <form
@@ -220,7 +219,7 @@
  
 
                         </div>
-
+ 
                         <!-- ========================= -->
                         <!-- BUTTONS -->
                         <!-- ========================= -->
@@ -230,7 +229,7 @@
                                 @click="
                                     openCreate=false;
                                     items=[];
-                                    newItem='';
+                                    newItem=''; 
                                 " class="px-4 py-2 rounded border"
                             >
                                 Cancel
